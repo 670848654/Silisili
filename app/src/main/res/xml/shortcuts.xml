@@ -1,0 +1,46 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 条件筛选 -->
+    <shortcut
+        android:shortcutId="tag"
+        android:enabled="true"
+        android:icon="@drawable/heart"
+        android:shortcutShortLabel="@string/tagShortName"
+        android:shortcutLongLabel="@string/tagLongName"
+        android:shortcutDisabledMessage="@string/disableMsg">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="my.project.silisili"
+            android:targetClass="my.project.silisili.main.tag.TagActivity" />
+        <categories android:name="android.shortcut.conversation"/>
+    </shortcut>
+    <!-- 我收藏的番剧 -->
+    <shortcut
+        android:shortcutId="favorite"
+        android:enabled="true"
+        android:icon="@drawable/heart"
+        android:shortcutShortLabel="@string/favoriteShortName"
+        android:shortcutLongLabel="@string/favoriteLongName"
+        android:shortcutDisabledMessage="@string/disableMsg">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="my.project.silisili"
+            android:targetClass="my.project.silisili.main.favorite.FavoriteActivity" />
+        <categories android:name="android.shortcut.conversation"/>
+    </shortcut>
+    <shortcut
+        android:shortcutId="recommend"
+        android:enabled="true"
+        android:icon="@drawable/heart"
+        android:shortcutShortLabel="@string/searchShortName"
+        android:shortcutLongLabel="@string/searchLongName"
+        android:shortcutDisabledMessage="@string/disableMsg">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="my.project.silisili"
+            android:targetClass="my.project.silisili.main.search.SearchActivity" />
+        <categories android:name="android.shortcut.conversation"/>
+    </shortcut>
+</shortcuts>

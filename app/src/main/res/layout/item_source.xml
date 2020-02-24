@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    android:id="@+id/videos_card_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:foreground="?android:attr/selectableItemBackground"
+    card_view:cardBackgroundColor="@color/window_bg"
+    card_view:cardCornerRadius="0dp"
+    card_view:cardElevation="4dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="1dp"
+    card_view:cardUseCompatPadding="false"
+    xmlns:app="http://schemas.android.com/tools"
+    app:ignore="NamespaceTypo">
+
+    <LinearLayout
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:padding="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/img"
+                android:src="@drawable/github"
+                android:tint="@color/text_color_primary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentStart="true"
+                 />
+            <TextView
+                android:id="@+id/title"
+                android:layout_toEndOf="@+id/img"
+                android:layout_centerVertical="true"
+                android:textColor="@color/text_color_primary"
+                android:padding="5dp"
+                android:textSize="16sp"
+                android:maxEms="12"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/author"
+                android:padding="5dp"
+                android:textSize="16sp"
+                android:textColor="@color/text_color_primary"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+        <View
+            android:layout_margin="3dp"
+            android:layout_height="1px"
+            android:background="#212121"
+            android:layout_width="match_parent" />
+
+        <TextView
+            android:padding="5dp"
+            android:id="@+id/desc"
+            android:textSize="16sp"
+            android:textColor="@color/text_color_primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
