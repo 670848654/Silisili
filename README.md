@@ -11,7 +11,7 @@
 </tr>
 <tr>
 <td bgcolor=orange><img src="https://raw.githubusercontent.com/670848654/Silisili/master/Screenshots/Screenshot_20200224-101418.jpg"/></td>
-<td bgcolor=orange><img src="https://raw.githubusercontent.com/670848654/Silisili/master/Screenshots/Screenshot_20200224-101410"/></td>
+<td bgcolor=orange><img src="https://raw.githubusercontent.com/670848654/Silisili/master/Screenshots/Screenshot_20200224-101410jpg"/></td>
 </tr>
 </table>
 <table>
