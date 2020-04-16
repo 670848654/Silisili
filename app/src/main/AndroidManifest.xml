@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="my.project.silisili">
 
@@ -14,9 +15,9 @@
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:requestLegacyExternalStorage = "true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
@@ -27,8 +28,10 @@
             android:theme="@style/startTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
@@ -48,12 +51,13 @@
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
             android:screenOrientation="portrait"
             android:theme="@style/TranslucentTheme" />
-        <activity android:name=".main.player.PlayerActivity"
+        <activity
+            android:name=".main.player.PlayerActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
             android:excludeFromRecents="true"
             android:screenOrientation="sensorLandscape"
             android:supportsPictureInPicture="true"
-            android:theme="@style/AppTheme.FullScreenTheme"/>
+            android:theme="@style/AppTheme.FullScreenTheme" />
         <activity
             android:name=".main.tag.TagActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
@@ -86,28 +90,31 @@
             android:theme="@style/TranslucentTheme" />
         <activity
             android:name=".main.webview.x5.DefaultX5WebActivity"
-            android:screenOrientation="portrait"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
             android:hardwareAccelerated="true"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".main.webview.normal.DefaultNormalWebActivity"
-            android:screenOrientation="portrait"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
             android:hardwareAccelerated="true"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
+
         <service
             android:name=".services.ClearVideoCacheService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="my.project.silisili.fileProvider"
-            android:grantUriPermissions="true"
-            android:exported="false">
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_path" />
         </provider>
     </application>
+
 </manifest>

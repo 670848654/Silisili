@@ -76,7 +76,7 @@
     <string name="setting_title">自定义</string>
     <!-- 设置界面文本 -->
     <string name="api">0</string>
-    <string name="x5">X5内核（若webView闪退则需禁用该项）</string>
+    <string name="x5">X5内核&lt;若webView闪退需禁用&gt;</string>
     <string name="x5_up">启用</string>
     <string name="x5_down">禁用</string>
     <string name="page_title">设置参数</string>
@@ -117,7 +117,7 @@
     <string name="statement">声明</string>
     <string name="statement_desc">仅供学习交流\n禁止非法传播或用于商业用途</string>
     <string name="test_model">测试</string>
-    <string name="test_model_desc">OnePlus 7 Pro : Android 10</string>
+    <string name="test_model_desc">OnePlus 7 Pro\nAndroid 10</string>
     <string name="now_version">当前版本</string>
     <string name="update_log">更新日志</string>
     <string name="check_update">检测更新</string>
@@ -126,11 +126,11 @@
     <string name="update_now">马上更新</string>
     <string name="update_latter">暂不更新</string>
     <string name="no_new_version">已是最新版本，无需更新</string>
-    <string name="network_error">连接服务器超时，请重试</string>
+    <string name="network_error">连接服务器超时，检测更新失败</string>
     <string name="download">下载中,请等待</string>
     <string name="download_error">下载失败</string>
     <string name="final_compile">最后编译日期</string>
-    <string name="final_compile_time">2020年2月17日</string>
+    <string name="final_compile_time">2020年4月16日</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SilisiliAnime/\n卸载后自行删除此目录</string>
     <string name="github">Github</string>
@@ -156,4 +156,20 @@
         <item>http://</item>
         <item>https://</item>
     </string-array>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 </resources>

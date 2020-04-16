@@ -342,6 +342,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void showLoadingView() {
         mIsLoad = true;
         showEmptyVIew();
+        detailsRv.scrollToPosition(0);
+        recommendRv.scrollToPosition(0);
     }
 
     @Override

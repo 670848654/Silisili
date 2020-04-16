@@ -43,15 +43,15 @@ public class TagModel implements TagContract.Model {
                         for (int i = 0; i < years.size(); i++) {
                             setXFData(years.get(i).select("a"));
                         }
-                        TagHeaderBean homeHeaderBean = new TagHeaderBean("2000年-2009年动漫");
-                        homeHeaderBean.addSubItem(new TagBean("2000年-2009年",
+                        TagHeaderBean homeHeaderBean = new TagHeaderBean("2000年-2009年的动漫");
+                        homeHeaderBean.addSubItem(new TagBean("2000-2009",
                                 Silisili.DOMAIN + "/anime/2010xq/",
-                                "2000年-2009年动漫"));
+                                ""));
                         list.add(homeHeaderBean);
-                        homeHeaderBean = new TagHeaderBean("2000年以前动漫");
-                        homeHeaderBean.addSubItem(new TagBean("2000年以前动漫",
+                        homeHeaderBean = new TagHeaderBean("2000年以前的动漫");
+                        homeHeaderBean.addSubItem(new TagBean("2000以前",
                                 Silisili.DOMAIN + "/anime/2000xq/",
-                                "2000年以前动漫"));
+                                ""));
                         list.add(homeHeaderBean);
                         // 地区列表
                         Elements regions = taglist.get(1).select("dl.tag-list");

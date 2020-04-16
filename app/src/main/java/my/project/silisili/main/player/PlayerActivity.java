@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
@@ -21,7 +22,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fanchen.sniffing.SniffingUICallback;
 import com.fanchen.sniffing.SniffingVideo;
 import com.fanchen.sniffing.web.SniffingUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -157,7 +157,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
             v.setTextColor(getResources().getColor(R.color.item_selected_color));
             bean.setSelected(true);
             siliUrl = VideoUtils.getSiliUrl(bean.getUrl());
-            witchTitle = animeTitle + " - 第" + bean.getTitle() + "话";
+            witchTitle = animeTitle + " - " + bean.getTitle();
             presenter = new VideoPresenter(animeTitle, siliUrl, PlayerActivity.this);
             presenter.loadData(true);
         });

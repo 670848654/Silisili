@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -51,8 +52,6 @@ public class AboutActivity extends BaseActivity {
     Toolbar toolbar;
     @BindView(R.id.cache)
     TextView cache;
-    @BindView(R.id.open_source)
-    TextView open_source;
     @BindView(R.id.version)
     TextView version;
     private ProgressDialog p;
@@ -99,19 +98,19 @@ public class AboutActivity extends BaseActivity {
         footer.findViewById(R.id.footer).setLayoutParams(Params);
         version.setText(Utils.getASVersionName());
         cache.setText(Environment.getExternalStorageDirectory() + Utils.getString(R.string.cache_text));
-        open_source.setOnClickListener(v -> {
-            if (Utils.isFastClick()) startActivity(new Intent(AboutActivity.this,OpenSourceActivity.class));
-        });
     }
 
-    @OnClick({R.id.silisili,R.id.github})
-    public void openBrowser(CardView cardView) {
-        switch (cardView.getId()) {
+    @OnClick({R.id.silisili,R.id.github,R.id.check_update})
+    public void openBrowser(RelativeLayout relativeLayout) {
+        switch (relativeLayout.getId()) {
             case R.id.silisili:
-                Utils.viewInChrome(this, Silisili.DOMAIN);
+                if (Utils.isFastClick()) Utils.viewInChrome(this, Silisili.DOMAIN);
                 break;
             case R.id.github:
-                Utils.viewInChrome(this, Utils.getString(R.string.github_url));
+                if (Utils.isFastClick()) Utils.viewInChrome(this, Utils.getString(R.string.github_url));
+                break;
+             case R.id.check_update:
+                 if (Utils.isFastClick()) checkUpdate();
                 break;
         }
     }
@@ -119,11 +118,11 @@ public class AboutActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.about_menu, menu);
-        MenuItem checkUpdateItem = menu.findItem(R.id.check_update);
         MenuItem updateLogItem = menu.findItem(R.id.update_log);
+        MenuItem openSourceItem = menu.findItem(R.id.open_source);
         if (!(Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false)) {
-            checkUpdateItem.setIcon(R.drawable.baseline_update_black_48dp);
-            updateLogItem.setIcon(R.drawable.baseline_log_black_48dp);
+            updateLogItem.setIcon(R.drawable.baseline_insert_chart_outlined_black_48dp);
+            openSourceItem.setIcon(R.drawable.baseline_all_inclusive_black_48dp);
         }
         return true;
     }
@@ -132,10 +131,10 @@ public class AboutActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.update_log:
-                showUpdateLogs();
+                if (Utils.isFastClick()) showUpdateLogs();
                 break;
-            case R.id.check_update:
-                if (Utils.isFastClick()) checkUpdate();
+            case R.id.open_source:
+                if (Utils.isFastClick()) startActivity(new Intent(AboutActivity.this,OpenSourceActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -164,6 +163,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("1.0-beta2", "2020年4月16日", "修复一些Bug\n部分界面UI改动"));
         logsList.add(new LogBean("1.0-beta1", "2020年2月18日", "第一个beta版本"));
         return logsList;
     }
