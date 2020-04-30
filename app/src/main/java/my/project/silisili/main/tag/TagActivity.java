@@ -16,6 +16,7 @@ import com.r0adkll.slidr.Slidr;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
 import my.project.silisili.R;
 import my.project.silisili.adapter.TagAdapter;
 import my.project.silisili.bean.TagBean;
@@ -24,7 +25,6 @@ import my.project.silisili.main.base.BaseActivity;
 import my.project.silisili.util.SwipeBackLayoutUtil;
 import my.project.silisili.util.Utils;
 import my.project.silisili.util.VideoUtils;
-import butterknife.BindView;
 
 public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> implements TagContract.View {
     @BindView(R.id.toolbar)

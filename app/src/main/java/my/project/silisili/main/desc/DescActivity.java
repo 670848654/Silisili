@@ -11,14 +11,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.widget.NestedScrollView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,11 +40,13 @@ import com.r0adkll.slidr.Slidr;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.OnClick;
+import jp.wasabeef.blurry.Blurry;
 import my.project.silisili.R;
 import my.project.silisili.adapter.AnimeDescDetailsAdapter;
 import my.project.silisili.adapter.AnimeDescDramaAdapter;
 import my.project.silisili.adapter.AnimeDescRecommendAdapter;
-import my.project.silisili.application.Silisili;
 import my.project.silisili.bean.AnimeDescBean;
 import my.project.silisili.bean.AnimeDescDetailsBean;
 import my.project.silisili.bean.AnimeDescHeaderBean;
@@ -57,9 +61,6 @@ import my.project.silisili.util.StatusBarUtil;
 import my.project.silisili.util.SwipeBackLayoutUtil;
 import my.project.silisili.util.Utils;
 import my.project.silisili.util.VideoUtils;
-import butterknife.BindView;
-import butterknife.OnClick;
-import jp.wasabeef.blurry.Blurry;
 
 public class DescActivity extends BaseActivity<DescContract.View, DescPresenter> implements DescContract.View, VideoContract.View, SniffingUICallback {
     @BindView(R.id.toolbar)
@@ -84,10 +85,12 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     AppCompatTextView state;
     @BindView(R.id.error_bg)
     RelativeLayout errorBg;
-    @BindView(R.id.content_bg)
-    NestedScrollView contentBg;
+    @BindView(R.id.play_layout)
+    LinearLayout playLinearLayout;
+    @BindView(R.id.recommend_layout)
+    LinearLayout recommendLinearLayout;
     @BindView(R.id.open_drama)
-    AppCompatTextView openDrama;
+    RelativeLayout openDrama;
     private RecyclerView lineRecyclerView;
     private AnimeDescDetailsAdapter animeDescDetailsAdapter;
     private AnimeDescRecommendAdapter animeDescRecommendAdapter;
@@ -111,6 +114,11 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     private MenuItem downView;
     private BottomSheetDialog mBottomSheetDialog;
     private AnimeDescDramaAdapter animeDescDramaAdapter;
+    @BindView(R.id.msg)
+    CoordinatorLayout msg;
+    @BindView(R.id.error_msg)
+    TextView error_msg;
+    private ImageView closeDrama;
 
     @Override
     protected DescPresenter createPresenter() {
@@ -132,6 +140,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         StatusBarUtil.setColorForSwipeBack(this, getResources().getColor(R.color.colorPrimaryDark), 0);
         StatusBarUtil.setTranslucentForImageView(this, 0, toolbar);
         Slidr.attach(this, Utils.defaultInit());
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) msg.getLayoutParams();
+        params.setMargins(0, 0, 0, Utils.getNavigationBarHeight(this) - 5);
         getBundle();
         initToolbar();
         initFab();
@@ -168,10 +178,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
     public void initSwipe() {
         mSwipe.setColorSchemeResources(R.color.pink500, R.color.blue500, R.color.purple500);
-        mSwipe.setOnRefreshListener(() -> {
-            contentBg.setVisibility(View.GONE);
-            mPresenter.loadData(true);
-        });
+        mSwipe.setOnRefreshListener(() -> mPresenter.loadData(true));
         mSwipe.setRefreshing(true);
     }
 
@@ -212,6 +219,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         lineRecyclerView.setAdapter(animeDescDramaAdapter);
         mBottomSheetDialog = new BottomSheetDialog(this);
         mBottomSheetDialog.setContentView(dramaView);
+        closeDrama = dramaView.findViewById(R.id.close_drama);
+        closeDrama.setOnClickListener(v-> mBottomSheetDialog.dismiss());
     }
 
     private LinearLayoutManager getLinearLayoutManager() {
@@ -241,7 +250,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         animeDescBeans = new AnimeDescBean();
         favorite.setVisibility(View.GONE);
         mPresenter = new DescPresenter(siliUrl, this);
-        mPresenter = new DescPresenter(siliUrl, this);
         mPresenter.loadData(true);
     }
 
@@ -254,6 +262,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         dramaUrl = VideoUtils.getSiliUrl(bean.getUrl());
         witchTitle = animeTitle + " - " + bean.getTitle();
         animeDescDetailsAdapter.notifyDataSetChanged();
+        animeDescDramaAdapter.notifyDataSetChanged();
         videoPresenter = new VideoPresenter(animeTitle, dramaUrl, DescActivity.this);
         videoPresenter.loadData(true);
     }
@@ -276,7 +285,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                     break;
             }
         } else {
-            Silisili.getInstance().showToastMsg(Utils.getString(R.string.should_be_used_web));
+            application.showToastMsg(Utils.getString(R.string.should_be_used_web));
             SniffingUtil.get().activity(this).referer(animeUrl).callback(this).url(animeUrl).start();
         }
     }
@@ -298,7 +307,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 animeUrlList.remove(animeUrlList.size() - 1);
                 siliUrl = animeUrlList.get(animeUrlList.size() - 1);
                 openAnimeDesc();
-            } else Silisili.getInstance().showToastMsg(Utils.getString(R.string.load_desc_info));
+            } else  application.showSnackbarMsg(msg, Utils.getString(R.string.load_desc_info));
         }
     }
 
@@ -307,12 +316,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         isFavorite = DatabaseUtil.favorite(animeDescHeaderBean);
         if (isFavorite) {
             Glide.with(DescActivity.this).load(R.drawable.baseline_favorite_white_48dp).into(favorite);
-            application.showCustomToastMsg(Utils.getString(R.string.join_ok),
-                    R.drawable.ic_add_favorite_48dp, R.color.green300);
+            application.showSnackbarMsg(msg, Utils.getString(R.string.join_ok));
         } else {
             Glide.with(DescActivity.this).load(R.drawable.baseline_favorite_border_white_48dp).into(favorite);
-            application.showCustomToastMsg(Utils.getString(R.string.join_error),
-                    R.drawable.ic_remove_favorite_48dp, R.color.red300);
+            application.showSnackbarMsg(msg, Utils.getString(R.string.join_error));
         }
     }
 
@@ -353,7 +360,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 mIsLoad = false;
                 mSwipe.setRefreshing(false);
                 setCollapsingToolbar();
-                contentBg.setVisibility(View.GONE);
+                playLinearLayout.setVisibility(View.GONE);
+                recommendLinearLayout.setVisibility(View.GONE);
+                error_msg.setText(msg);
                 errorBg.setVisibility(View.VISIBLE);
             }
         });
@@ -364,7 +373,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         mSwipe.setRefreshing(true);
         if (downView != null && downView.isVisible())
             downView.setVisible(false);
-        contentBg.setVisibility(View.GONE);
+        playLinearLayout.setVisibility(View.GONE);
+        recommendLinearLayout.setVisibility(View.GONE);
         errorBg.setVisibility(View.GONE);
     }
 
@@ -412,8 +422,13 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 mIsLoad = false;
                 setCollapsingToolbar();
                 mSwipe.setRefreshing(false);
-                contentBg.setVisibility(View.VISIBLE);
+                playLinearLayout.setVisibility(View.VISIBLE);
+                recommendLinearLayout.setVisibility(View.VISIBLE);
                 this.animeDescBeans = bean;
+                if (bean.getAnimeDescDetailsBeans().size() > 4)
+                    openDrama.setVisibility(View.VISIBLE);
+                else
+                    openDrama.setVisibility(View.GONE);
                 animeDescDetailsAdapter.setNewData(bean.getAnimeDescDetailsBeans());
                 animeDescRecommendAdapter.setNewData(bean.getAnimeDescRecommendBeans());
                 animeDescDramaAdapter.setNewData(bean.getAnimeDescDetailsBeans());
@@ -467,7 +482,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @Override
     public void getIframeUrl(String iframeUrl) {
         runOnUiThread(() -> {
-            Silisili.getInstance().showToastMsg(Utils.getString(R.string.should_be_used_web));
+            application.showToastMsg(Utils.getString(R.string.should_be_used_web));
             SniffingUtil.get().activity(this).referer(iframeUrl).callback(this).url(iframeUrl).start();
         });
     }
@@ -475,7 +490,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @Override
     public void getVideoEmpty() {
         runOnUiThread(() -> {
-            Silisili.getInstance().showToastMsg(Utils.getString(R.string.open_web_view));
+            application.showToastMsg(Utils.getString(R.string.open_web_view));
             VideoUtils.openDefaultWebview(this, dramaUrl);
         });
     }
@@ -519,7 +534,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
     @Override
     public void onSniffingError(View webView, String url, int errorCode) {
-        Silisili.getInstance().showToastMsg(Utils.getString(R.string.open_web_view));
+        application.showToastMsg(Utils.getString(R.string.open_web_view));
         VideoUtils.openDefaultWebview(this, dramaUrl);
     }
 }

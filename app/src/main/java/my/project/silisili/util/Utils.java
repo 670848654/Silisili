@@ -549,6 +549,7 @@ public class Utils {
         if (resourceId > 0 && checkHasNavigationBar(activity)) {
             result = resources.getDimensionPixelSize(resourceId);
         }
+        Log.e("navigation_bar_height", result + "");
         return result + 5;
     }
 

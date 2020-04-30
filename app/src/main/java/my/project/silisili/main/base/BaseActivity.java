@@ -14,14 +14,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.List;
 
-import my.project.silisili.util.SharedPreferencesUtils;
-import my.project.silisili.util.StatusBarUtil;
-import my.project.silisili.util.Utils;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import my.project.silisili.R;
 import my.project.silisili.application.Silisili;
 import my.project.silisili.database.DatabaseUtil;
+import my.project.silisili.util.SharedPreferencesUtils;
+import my.project.silisili.util.StatusBarUtil;
+import my.project.silisili.util.Utils;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {

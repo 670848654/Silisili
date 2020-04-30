@@ -11,14 +11,14 @@ import com.r0adkll.slidr.Slidr;
 import java.util.ArrayList;
 import java.util.List;
 
-import my.project.silisili.util.SwipeBackLayoutUtil;
-import my.project.silisili.util.Utils;
 import butterknife.BindView;
 import my.project.silisili.R;
 import my.project.silisili.adapter.SourceAdapter;
 import my.project.silisili.bean.SourceBean;
 import my.project.silisili.main.base.BaseActivity;
 import my.project.silisili.main.base.Presenter;
+import my.project.silisili.util.SwipeBackLayoutUtil;
+import my.project.silisili.util.Utils;
 
 public class OpenSourceActivity extends BaseActivity {
     @BindView(R.id.toolbar)
@@ -72,7 +72,7 @@ public class OpenSourceActivity extends BaseActivity {
 
     public void initList(){
         list.add(new SourceBean("jsoup","jhy","jsoup: Java HTML Parser, with best of DOM, CSS, and jquery","https://github.com/jhy/jsoup"));
-        list.add(new SourceBean("BaseRecyclerViewAdapterHelper","CymChad","BRVAH:Powerful and flexible RecyclerAdapter","https://github.com/CymChad/BaseRecyclerViewAdapterHelper"));
+        list.add(new SourceBean("BaseRecyclerView\nAdapterHelper","CymChad","BRVAH:Powerful and flexible RecyclerAdapter","https://github.com/CymChad/BaseRecyclerViewAdapterHelper"));
         list.add(new SourceBean("Glide","bumptech","An image loading and caching library for Android focused on smooth scrolling","https://github.com/bumptech/glide"));
         list.add(new SourceBean("EasyPermissions","googlesamples","Simplify Android M system permissions","https://github.com/googlesamples/easypermissions"));
         list.add(new SourceBean("MaterialEditText","rengwuxian","EditText in Material Design","https://github.com/rengwuxian/MaterialEditText"));

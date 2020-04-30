@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,11 +29,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import my.project.silisili.net.DownloadUtil;
-import my.project.silisili.net.HttpGet;
-import my.project.silisili.util.SharedPreferencesUtils;
-import my.project.silisili.util.SwipeBackLayoutUtil;
-import my.project.silisili.util.Utils;
 import butterknife.BindView;
 import butterknife.OnClick;
 import my.project.silisili.R;
@@ -43,6 +38,11 @@ import my.project.silisili.application.Silisili;
 import my.project.silisili.bean.LogBean;
 import my.project.silisili.main.base.BaseActivity;
 import my.project.silisili.main.base.Presenter;
+import my.project.silisili.net.DownloadUtil;
+import my.project.silisili.net.HttpGet;
+import my.project.silisili.util.SharedPreferencesUtils;
+import my.project.silisili.util.SwipeBackLayoutUtil;
+import my.project.silisili.util.Utils;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -59,6 +59,8 @@ public class AboutActivity extends BaseActivity {
     private Call downCall;
     @BindView(R.id.footer)
     LinearLayout footer;
+    @BindView(R.id.show)
+    CoordinatorLayout show;
 
     @Override
     protected Presenter createPresenter() {
@@ -95,7 +97,9 @@ public class AboutActivity extends BaseActivity {
 
     private void initViews(){
         LinearLayout.LayoutParams Params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.getNavigationBarHeight(this));
-        footer.findViewById(R.id.footer).setLayoutParams(Params);
+        footer.setLayoutParams(Params);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) show.getLayoutParams();
+        params.setMargins(0, 0, 0, Utils.getNavigationBarHeight(this) - 5);
         version.setText(Utils.getASVersionName());
         cache.setText(Environment.getExternalStorageDirectory() + Utils.getString(R.string.cache_text));
     }
@@ -163,6 +167,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("1.0-beta3", "2020年4月28日", "修复番剧详情中的显示Bug"));
         logsList.add(new LogBean("1.0-beta2", "2020年4月16日", "修复一些Bug\n部分界面UI改动"));
         logsList.add(new LogBean("1.0-beta1", "2020年2月18日", "第一个beta版本"));
         return logsList;
@@ -175,9 +180,11 @@ public class AboutActivity extends BaseActivity {
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(() -> {
                     Utils.cancelProDialog(p);
-                    application.showErrorToastMsg(Utils.getString(R.string.network_error));
+                    application.showSnackbarMsgAction(show, Utils.getString(R.string.network_error), Utils.getString(R.string.try_again), v -> checkUpdate());
                 });
             }
+
+
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -188,7 +195,7 @@ public class AboutActivity extends BaseActivity {
                     if (newVersion.equals(Utils.getASVersionName()))
                         runOnUiThread(() -> {
                             Utils.cancelProDialog(p);
-                            application.showSuccessToastMsg(Utils.getString(R.string.no_new_version));
+                            application.showSnackbarMsg(show, Utils.getString(R.string.no_new_version));
                         });
                     else {
                         downloadUrl = obj.getJSONArray("assets").getJSONObject(0).getString("browser_download_url");
@@ -198,18 +205,8 @@ public class AboutActivity extends BaseActivity {
                            Utils.findNewVersion(AboutActivity.this,
                                    newVersion,
                                    body,
-                                   (dialog, which) -> {
-                                       p = Utils.showProgressDialog(AboutActivity.this);
-                                       p.setButton(ProgressDialog.BUTTON_NEGATIVE, Utils.getString(R.string.page_negative), (dialog1, which1) -> {
-                                           if (null != downCall)
-                                               downCall.cancel();
-                                           dialog1.dismiss();
-                                       });
-                                       p.show();
-                                       downNewVersion(downloadUrl);
-                                   },
-                                   (dialog, which) ->
-                                       dialog.dismiss()
+                                   (dialog, which) -> download(),
+                                   (dialog, which) -> dialog.dismiss()
                                    );
                         });
                     }
@@ -218,6 +215,17 @@ public class AboutActivity extends BaseActivity {
                 }
             }
         }), 1000);
+    }
+
+    public void download() {
+        p = Utils.showProgressDialog(AboutActivity.this);
+        p.setButton(ProgressDialog.BUTTON_NEGATIVE, Utils.getString(R.string.page_negative), (dialog1, which1) -> {
+            if (null != downCall)
+                downCall.cancel();
+            dialog1.dismiss();
+        });
+        p.show();
+        downNewVersion(downloadUrl);
     }
 
     /**
@@ -241,7 +249,7 @@ public class AboutActivity extends BaseActivity {
             public void onDownloadFailed() {
                 runOnUiThread(() -> {
                     Utils.cancelProDialog(p);
-                    application.showErrorToastMsg(Utils.getString(R.string.download_error));
+                    application.showSnackbarMsgAction(show, Utils.getString(R.string.download_error), Utils.getString(R.string.try_again), v -> download());
                 });
             }
         });

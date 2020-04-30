@@ -8,8 +8,8 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
-import my.project.silisili.bean.WebviewBean;
 import my.project.silisili.R;
+import my.project.silisili.bean.WebviewBean;
 
 public class WebviewAdapter extends BaseQuickAdapter<WebviewBean, BaseViewHolder> {
     private Context context;

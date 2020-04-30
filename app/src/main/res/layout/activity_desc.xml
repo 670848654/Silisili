@@ -102,6 +102,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:gravity="center_vertical" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -154,15 +156,13 @@
         app:layout_anchor="@id/appBarLayout"
         app:layout_anchorGravity="bottom|right" />
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    <my.project.silisili.custom.MySwipeRefreshLayout
         android:id="@+id/mSwipe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.core.widget.NestedScrollView
-            android:id="@+id/content_bg"
-            android:visibility="gone"
             android:focusableInTouchMode="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -170,8 +170,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
                 <!-- 剧集视图 -->
                 <LinearLayout
+                    android:id="@+id/play_layout"
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -179,19 +182,12 @@
                         android:textColor="@color/text_color_primary"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginBottom="5dp"
+                        android:padding="5dp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
-                        android:textSize="20sp"
-                        android:text="播放列表">
+                        android:text="选集">
                     </androidx.appcompat.widget.AppCompatTextView>
-                    <View
-                        android:layout_width="120dp"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginTop="-5dp"
-                        android:layout_height="8px"
-                        android:background="@color/colorAccent" />
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/details_list"
                         android:layout_width="match_parent"
@@ -199,16 +195,17 @@
                         android:fillViewport="true"
                         android:clipToPadding="false"
                         android:fadingEdge="none"
-                        android:paddingBottom="10dp"/>
+                        android:paddingBottom="5dp"/>
                     <RelativeLayout
+                        android:id="@+id/open_drama"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="right"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="4dp"
                         android:layout_centerVertical="true"
-                        android:layout_marginRight="8dp">
+                        android:layout_marginRight="5dp">
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/open_drama"
+                            android:id="@+id/drama"
                             android:textColor="@color/colorAccent"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -217,9 +214,8 @@
                             android:text="展开全部" />
                         <ImageView
                             android:id="@+id/down_img"
-
                             android:layout_marginLeft="2dp"
-                            android:layout_toRightOf="@id/open_drama"
+                            android:layout_toRightOf="@id/drama"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:src="@drawable/ic_keyboard_arrow_down_white_48dp"
@@ -227,8 +223,11 @@
                             android:scaleType="centerInside" />
                     </RelativeLayout>
                 </LinearLayout>
+
                 <!-- 推荐视图 -->
                 <LinearLayout
+                    android:id="@+id/recommend_layout"
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -236,19 +235,12 @@
                         android:textColor="@color/text_color_primary"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:textSize="20sp"
+                        android:paddingTop="5dp"
+                        android:paddingLeft="5dp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         android:text="相关推荐">
                     </androidx.appcompat.widget.AppCompatTextView>
-                    <View
-                        android:layout_width="120dp"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginTop="-5dp"
-                        android:layout_height="8px"
-                        android:background="@color/colorAccent" />
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recommend_list"
                         android:layout_width="match_parent"
@@ -256,31 +248,40 @@
                         android:fillViewport="true"
                         android:clipToPadding="false"
                         android:fadingEdge="none"
-                        android:paddingBottom="10dp"/>
+                        android:paddingBottom="5dp"/>
                 </LinearLayout>
+
+                <!-- 错误视图 -->
+                <RelativeLayout
+                    android:id="@+id/error_bg"
+                    style="@style/bg"
+                    android:visibility="gone"
+                    android:background="@color/window_bg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:id="@+id/error_msg"
+                        android:layout_margin="8dp"
+                        android:background="@drawable/parsing_error_bg"
+                        android:padding="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:gravity="center"
+                        android:lineSpacingExtra="10dp"
+                        android:textColor="#333"/>
+                    <!--android:background="#f4f5f7"-->
+                </RelativeLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
-        <!-- 错误视图 -->
-        <RelativeLayout
-            android:id="@+id/error_bg"
-            style="@style/bg"
-            android:visibility="gone"
-            android:background="@color/window_bg"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <TextView
-                android:id="@+id/error_msg"
-                android:layout_margin="8dp"
-                android:background="@drawable/parsing_error_bg"
-                android:padding="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:gravity="center"
-                android:lineSpacingExtra="10dp"
-                android:textColor="#333"/>
-            <!--android:background="#f4f5f7"-->
-        </RelativeLayout>
+    </my.project.silisili.custom.MySwipeRefreshLayout>
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        app:layout_anchor="@id/mSwipe"
+        app:layout_anchorGravity="bottom"
+        android:background="@color/translucent"
+        android:id="@+id/msg">
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

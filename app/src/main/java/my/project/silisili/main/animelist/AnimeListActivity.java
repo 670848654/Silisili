@@ -18,6 +18,8 @@ import com.r0adkll.slidr.Slidr;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.OnClick;
 import my.project.silisili.R;
 import my.project.silisili.adapter.AnimeListAdapter;
 import my.project.silisili.application.Silisili;
@@ -29,8 +31,6 @@ import my.project.silisili.main.search.SearchActivity;
 import my.project.silisili.util.SwipeBackLayoutUtil;
 import my.project.silisili.util.Utils;
 import my.project.silisili.util.VideoUtils;
-import butterknife.BindView;
-import butterknife.OnClick;
 
 public class AnimeListActivity extends BaseActivity<AnimeListContract.View, AnimeListPresenter> implements AnimeListContract.View {
     @BindView(R.id.rv_list)

@@ -10,11 +10,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import my.project.silisili.net.HttpGet;
-import my.project.silisili.util.Utils;
 import my.project.silisili.R;
 import my.project.silisili.application.Silisili;
 import my.project.silisili.bean.AnimeDescHeaderBean;
+import my.project.silisili.net.HttpGet;
+import my.project.silisili.util.Utils;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;

@@ -1,6 +1,5 @@
 package my.project.silisili.main.home;
 
-import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
@@ -32,6 +31,7 @@ import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
+import butterknife.BindView;
 import my.project.silisili.R;
 import my.project.silisili.adapter.WeekAdapter;
 import my.project.silisili.application.Silisili;
@@ -48,7 +48,6 @@ import my.project.silisili.util.SharedPreferencesUtils;
 import my.project.silisili.util.StatusBarUtil;
 import my.project.silisili.util.Utils;
 import my.project.silisili.util.VideoUtils;
-import butterknife.BindView;
 
 public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter> implements NavigationView.OnNavigationItemSelectedListener, HomeContract.View {
     @BindView(R.id.drawer_layout)

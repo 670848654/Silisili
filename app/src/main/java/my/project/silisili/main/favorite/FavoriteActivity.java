@@ -3,9 +3,11 @@ package my.project.silisili.main.favorite;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -16,6 +18,7 @@ import com.r0adkll.slidr.Slidr;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
 import my.project.silisili.R;
 import my.project.silisili.adapter.FavoriteListAdapter;
 import my.project.silisili.bean.AnimeDescHeaderBean;
@@ -25,7 +28,6 @@ import my.project.silisili.main.desc.DescActivity;
 import my.project.silisili.util.SwipeBackLayoutUtil;
 import my.project.silisili.util.Utils;
 import my.project.silisili.util.VideoUtils;
-import butterknife.BindView;
 
 public class FavoriteActivity extends BaseActivity<FavoriteContract.View, FavoritePresenter> implements FavoriteContract.View {
     @BindView(R.id.toolbar)
@@ -36,6 +38,8 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
     @BindView(R.id.mSwipe)
     SwipeRefreshLayout mSwipe;
     private List<AnimeDescHeaderBean> favoriteList = new ArrayList<>();
+    @BindView(R.id.show)
+    CoordinatorLayout show;
 
     @Override
     protected FavoritePresenter createPresenter() {
@@ -55,6 +59,8 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
     @Override
     protected void init() {
         Slidr.attach(this,Utils.defaultInit());
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) show.getLayoutParams();
+        params.setMargins(0, 0, 0, Utils.getNavigationBarHeight(this) - 5);
         initToolbar();
         initSwipe();
         initAdapter();
@@ -116,8 +122,9 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
     private void removeFavorite(int position){
         DatabaseUtil.deleteFavorite(favoriteList.get(position).getName());
         adapter.remove(position);
-        application.showCustomToastMsg(Utils.getString(R.string.join_error),
-                R.drawable.ic_remove_favorite_48dp, R.color.red300);
+//        application.showCustomToastMsg(Utils.getString(R.string.join_error),
+//                R.drawable.ic_remove_favorite_48dp, R.color.red300);
+        application.showSnackbarMsg(show, Utils.getString(R.string.join_error));
         if (favoriteList.size() <= 0){
             errorTitle.setText(Utils.getString(R.string.empty_favorite));
             adapter.setEmptyView(errorView);

@@ -18,6 +18,7 @@ import com.r0adkll.slidr.Slidr;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
 import my.project.silisili.R;
 import my.project.silisili.adapter.AnimeListAdapter;
 import my.project.silisili.bean.AnimeDescHeaderBean;
@@ -27,7 +28,6 @@ import my.project.silisili.main.desc.DescActivity;
 import my.project.silisili.util.SwipeBackLayoutUtil;
 import my.project.silisili.util.Utils;
 import my.project.silisili.util.VideoUtils;
-import butterknife.BindView;
 
 public class SearchActivity extends BaseActivity<SearchContract.View, SearchPresenter> implements SearchContract.View {
     @BindView(R.id.toolbar)

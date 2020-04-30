@@ -16,6 +16,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.r0adkll.slidr.Slidr;
 
+import butterknife.BindView;
+import butterknife.OnClick;
 import my.project.silisili.R;
 import my.project.silisili.application.Silisili;
 import my.project.silisili.main.base.BaseActivity;
@@ -23,8 +25,6 @@ import my.project.silisili.main.base.Presenter;
 import my.project.silisili.util.SharedPreferencesUtils;
 import my.project.silisili.util.SwipeBackLayoutUtil;
 import my.project.silisili.util.Utils;
-import butterknife.BindView;
-import butterknife.OnClick;
 
 public class SettingActivity extends BaseActivity {
     @BindView(R.id.toolbar)
@@ -81,7 +81,7 @@ public class SettingActivity extends BaseActivity {
 
     public void initViews() {
         LinearLayout.LayoutParams Params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.getNavigationBarHeight(this));
-        footer.findViewById(R.id.footer).setLayoutParams(Params);
+        footer.setLayoutParams(Params);
     }
 
     public void getUserCustomSet() {
@@ -139,6 +139,8 @@ public class SettingActivity extends BaseActivity {
             }
         });
         EditText editText = view.findViewById(R.id.domain);
+        String defaultUrl = (String) SharedPreferencesUtils.getParam(this, "domain", Utils.getString(R.string.domain_url));
+        editText.setText(defaultUrl.replaceAll("http://", "").replaceAll("https://", ""));
         builder.setPositiveButton(Utils.getString(R.string.page_positive_edit), null);
         builder.setNegativeButton(Utils.getString(R.string.page_negative), null);
         builder.setNeutralButton(Utils.getString(R.string.page_def), null);
@@ -152,7 +154,7 @@ public class SettingActivity extends BaseActivity {
                 if (Patterns.WEB_URL.matcher(text).matches()) {
                     setResult(0x20);
                     if (text.endsWith("/")) text = text.substring(0, text.length()-1);
-                    url += text;
+                    url += text.replaceAll("http://", "").replaceAll("https://", "");
                     SharedPreferencesUtils.setParam(SettingActivity.this, "domain", url);
                     Silisili.DOMAIN = url;
                     Silisili.setDomain();

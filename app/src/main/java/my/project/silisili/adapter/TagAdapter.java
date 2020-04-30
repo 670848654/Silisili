@@ -6,9 +6,9 @@ import com.chad.library.adapter.base.entity.MultiItemEntity;
 
 import java.util.List;
 
+import my.project.silisili.R;
 import my.project.silisili.bean.TagBean;
 import my.project.silisili.bean.TagHeaderBean;
-import my.project.silisili.R;
 
 public class TagAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, BaseViewHolder> {
     public static final int TYPE_LEVEL_0 = 0;

@@ -8,9 +8,9 @@ import android.view.View;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
-import my.project.silisili.R;
 import cn.jzvd.JZDataSource;
 import cn.jzvd.JzvdStd;
+import my.project.silisili.R;
 
 public class JZPlayer extends JzvdStd {
     private Context context;

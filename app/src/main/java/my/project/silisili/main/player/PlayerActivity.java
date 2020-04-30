@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
@@ -22,9 +21,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fanchen.sniffing.SniffingUICallback;
 import com.fanchen.sniffing.SniffingVideo;
 import com.fanchen.sniffing.web.SniffingUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.OnClick;
+import cn.jzvd.Jzvd;
+import cn.jzvd.JzvdStd;
 import my.project.silisili.R;
 import my.project.silisili.adapter.AnimeDescDramaAdapter;
 import my.project.silisili.application.Silisili;
@@ -37,10 +41,6 @@ import my.project.silisili.util.SharedPreferencesUtils;
 import my.project.silisili.util.StatusBarUtil;
 import my.project.silisili.util.Utils;
 import my.project.silisili.util.VideoUtils;
-import butterknife.BindView;
-import butterknife.OnClick;
-import cn.jzvd.Jzvd;
-import cn.jzvd.JzvdStd;
 
 public class PlayerActivity extends BaseActivity implements VideoContract.View, JZPlayer.CompleteListener, JZPlayer.TouchListener, SniffingUICallback {
     @BindView(R.id.player)
@@ -52,7 +52,6 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     private AnimeDescDramaAdapter animeDescDramaAdapter;
     private ProgressDialog p;
     private String animeTitle;
-    private String[] videoUrlArr;
     @BindView(R.id.nav_view)
     LinearLayout linearLayout;
     @BindView(R.id.drawer_layout)
@@ -154,7 +153,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
             p = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
             Button v = (Button) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
             v.setBackgroundResource(R.drawable.button_selected);
-            v.setTextColor(getResources().getColor(R.color.item_selected_color));
+            v.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
             bean.setSelected(true);
             siliUrl = VideoUtils.getSiliUrl(bean.getUrl());
             witchTitle = animeTitle + " - " + bean.getTitle();
@@ -184,7 +183,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
                     break;
             }
         }else {
-            Silisili.getInstance().showToastMsg(Utils.getString(R.string.should_be_used_web));
+            application.showToastMsg(Utils.getString(R.string.should_be_used_web));
             SniffingUtil.get().activity(this).referer(animeUrl).callback(this).url(animeUrl).start();
         }
     }
@@ -275,7 +274,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     @Override
     public void getIframeUrl(String iframeUrl) {
         runOnUiThread(() -> {
-            Silisili.getInstance().showToastMsg(Utils.getString(R.string.should_be_used_web));
+            application.showToastMsg(Utils.getString(R.string.should_be_used_web));
             SniffingUtil.get().activity(this).referer(iframeUrl).callback(this).url(iframeUrl).start();
         });
     }
@@ -283,7 +282,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     @Override
     public void getVideoEmpty() {
         runOnUiThread(() -> {
-            Silisili.getInstance().showToastMsg(Utils.getString(R.string.open_web_view));
+            application.showToastMsg(Utils.getString(R.string.open_web_view));
             VideoUtils.openDefaultWebview(this, siliUrl);
             finish();
         });
@@ -344,7 +343,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
 
     @Override
     public void onSniffingError(View webView, String url, int errorCode) {
-        Silisili.getInstance().showToastMsg(Utils.getString(R.string.open_web_view));
+        application.showToastMsg(Utils.getString(R.string.open_web_view));
         VideoUtils.openDefaultWebview(this, siliUrl);
         this.finish();
     }

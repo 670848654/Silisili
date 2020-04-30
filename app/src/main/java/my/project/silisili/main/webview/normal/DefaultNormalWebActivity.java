@@ -18,13 +18,13 @@ import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.OnClick;
 import my.project.silisili.R;
 import my.project.silisili.main.base.BaseActivity;
 import my.project.silisili.main.base.Presenter;
 import my.project.silisili.services.ClearVideoCacheService;
 import my.project.silisili.util.Utils;
-import butterknife.BindView;
-import butterknife.OnClick;
 
 public class DefaultNormalWebActivity extends BaseActivity {
     private String url;

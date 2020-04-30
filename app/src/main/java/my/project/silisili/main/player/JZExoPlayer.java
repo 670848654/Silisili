@@ -36,9 +36,9 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoListener;
 
-import my.project.silisili.R;
 import cn.jzvd.JZMediaInterface;
 import cn.jzvd.Jzvd;
+import my.project.silisili.R;
 
 public class JZExoPlayer extends JZMediaInterface implements Player.EventListener, VideoListener {
     private SimpleExoPlayer simpleExoPlayer;

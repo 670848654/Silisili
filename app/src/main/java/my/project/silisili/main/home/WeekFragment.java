@@ -21,6 +21,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import my.project.silisili.R;
 import my.project.silisili.adapter.FragmentAdapter;
 import my.project.silisili.application.Silisili;
@@ -29,9 +32,6 @@ import my.project.silisili.main.base.LazyFragment;
 import my.project.silisili.main.desc.DescActivity;
 import my.project.silisili.util.Utils;
 import my.project.silisili.util.VideoUtils;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 
 @SuppressLint("ValidFragment")
 public class WeekFragment extends LazyFragment {

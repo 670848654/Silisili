@@ -7,9 +7,9 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
+import my.project.silisili.R;
 import my.project.silisili.bean.HomeWekBean;
 import my.project.silisili.util.Utils;
-import my.project.silisili.R;
 
 public class FragmentAdapter extends BaseQuickAdapter<HomeWekBean,BaseViewHolder> {
     private Context context;

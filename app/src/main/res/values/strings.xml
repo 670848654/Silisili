@@ -55,8 +55,8 @@
     <string name="parsing">解析中，请稍后&#8230;</string>
     <string name="error_700">网络错误，请重试!</string>
     <string name="error_800">未能获取到播放地址\n1、解析方法不支持\n2、播放地址不存在\n3、可以尝试打开原页面去播放</string>
-    <string name="join_ok">自己追的番就要好好看完哦</string>
-    <string name="join_error">哼！竟然真的抛弃了人家</string>
+    <string name="join_ok">(´・ω・`) 自己追的番就要好好看完哦！</string>
+    <string name="join_error">(﹁"﹁) 哼！竟然真的抛弃了人家。</string>
     <string name="parsing_error">解析出错\n代码无法解析该界面信息</string>
     <string name="should_be_used_web">常规解析失败,尝试嗅探获取播放地址&#8230;</string>
     <string name="open_web_view">解析视频地址失败，尝试使用WebView打开</string>
@@ -125,12 +125,13 @@
     <string name="has_new_version">发现新版本</string>
     <string name="update_now">马上更新</string>
     <string name="update_latter">暂不更新</string>
+    <string name="try_again">重试</string>
     <string name="no_new_version">已是最新版本，无需更新</string>
     <string name="network_error">连接服务器超时，检测更新失败</string>
     <string name="download">下载中,请等待</string>
     <string name="download_error">下载失败</string>
     <string name="final_compile">最后编译日期</string>
-    <string name="final_compile_time">2020年4月16日</string>
+    <string name="final_compile_time">2020年4月30日</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SilisiliAnime/\n卸载后自行删除此目录</string>
     <string name="github">Github</string>

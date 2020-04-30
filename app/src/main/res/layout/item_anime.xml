@@ -72,6 +72,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="2dp"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:textColor="?android:textColorPrimary" />
 
             <androidx.appcompat.widget.AppCompatTextView

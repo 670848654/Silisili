@@ -9,9 +9,9 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
+import my.project.silisili.R;
 import my.project.silisili.bean.AnimeDescRecommendBean;
 import my.project.silisili.util.Utils;
-import my.project.silisili.R;
 
 /**
  * 相关推荐适配器

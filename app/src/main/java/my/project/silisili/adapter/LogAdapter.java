@@ -5,8 +5,8 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
-import my.project.silisili.bean.LogBean;
 import my.project.silisili.R;
+import my.project.silisili.bean.LogBean;
 
 public class LogAdapter extends BaseQuickAdapter<LogBean, BaseViewHolder> {
     public LogAdapter(List list) {

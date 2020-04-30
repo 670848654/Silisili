@@ -9,9 +9,9 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import java.util.HashMap;
 
+import my.project.silisili.R;
 import my.project.silisili.main.home.WeekFragment;
 import my.project.silisili.util.Utils;
-import my.project.silisili.R;
 
 public class WeekAdapter extends FragmentStatePagerAdapter {
     private static final String[] TABS = Utils.getArray(R.array.week_array);

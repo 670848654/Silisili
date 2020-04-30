@@ -7,10 +7,10 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
+import my.project.silisili.R;
 import my.project.silisili.application.Silisili;
 import my.project.silisili.bean.AnimeDescHeaderBean;
 import my.project.silisili.util.Utils;
-import my.project.silisili.R;
 
 /**
  * 收藏列表适配器

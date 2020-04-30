@@ -5,15 +5,15 @@ import android.content.Intent;
 import android.os.Handler;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 
+import butterknife.BindView;
 import my.project.silisili.R;
 import my.project.silisili.api.Api;
 import my.project.silisili.main.base.BaseActivity;
@@ -24,7 +24,6 @@ import my.project.silisili.net.HttpGet;
 import my.project.silisili.util.SharedPreferencesUtils;
 import my.project.silisili.util.StatusBarUtil;
 import my.project.silisili.util.Utils;
-import butterknife.BindView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -32,8 +31,6 @@ import okhttp3.Response;
 public class StartActivity extends BaseActivity {
     @BindView(R.id.check_update)
     LinearLayout linearLayout;
-    @BindView(R.id.version)
-    TextView version;
     @BindView(R.id.view_need_offset)
     CoordinatorLayout coordinatorLayout;
     private ProgressDialog p;
@@ -56,8 +53,10 @@ public class StartActivity extends BaseActivity {
     @Override
     protected void init() {
         StatusBarUtil.setTranslucentForImageView(this, 0, coordinatorLayout);
-        version.setText(Utils.getASVersionName());
         SharedPreferencesUtils.setParam(this,"initX5","init");
+        RelativeLayout.LayoutParams Params = (RelativeLayout.LayoutParams) linearLayout.getLayoutParams();
+        Params.setMargins(0,0,0, Utils.getNavigationBarHeight(this));
+        linearLayout.setLayoutParams(Params);
         Handler handler = new Handler();
         handler.postDelayed(() -> {
             linearLayout.setVisibility(View.VISIBLE);
