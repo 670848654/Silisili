@@ -167,6 +167,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("1.0-beta4", "2020年5月18日", "修复已知问题"));
         logsList.add(new LogBean("1.0-beta3", "2020年4月28日", "修复番剧详情中的显示Bug"));
         logsList.add(new LogBean("1.0-beta2", "2020年4月16日", "修复一些Bug\n部分界面UI改动"));
         logsList.add(new LogBean("1.0-beta1", "2020年2月18日", "第一个beta版本"));

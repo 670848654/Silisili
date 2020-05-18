@@ -18,19 +18,15 @@ public class AnimeListAdapter extends BaseQuickAdapter<AnimeDescHeaderBean, Base
     private Context context;
 
     public AnimeListAdapter(Context context, List list) {
-        super(R.layout.item_anime, list);
+        super(R.layout.item_favorite, list);
         this.context = context;
     }
 
     @Override
     protected void convert(BaseViewHolder helper, AnimeDescHeaderBean item) {
+        Utils.setCardDefaultBg(context, helper.getView(R.id.card_view), helper.getView(R.id.title));
         Utils.setDefaultImage(context, item.getImg(), helper.getView(R.id.img));
+        Utils.setCardBg(context, item.getImg(), helper.getView(R.id.card_view), helper.getView(R.id.title));
         helper.setText(R.id.title, item.getName());
-        helper.setText(R.id.region, item.getRegion());
-        helper.setText(R.id.year, item.getYear());
-        helper.setText(R.id.tag, item.getTag());
-        helper.setText(R.id.desc, item.getDesc().isEmpty() || item.getDesc().equals("简介：") ? Utils.getString(R.string.no_show_msg) : item.getDesc());
-        helper.setText(R.id.show, item.getShow().isEmpty() || item.getShow().equals(Utils.getString(R.string.eye_msg)) ? Utils.getString(R.string.no_eye_msg) : item.getShow());
-        helper.setText(R.id.state, item.getState());
     }
 }

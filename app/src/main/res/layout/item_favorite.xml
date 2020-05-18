@@ -25,7 +25,7 @@
         <ImageView
             android:id="@+id/img"
             android:layout_width="match_parent"
-            android:layout_height="184dp"
+            android:layout_height="200dp"
             android:scaleType="centerCrop"
             android:transitionName="sharedImg" />
         <TextView

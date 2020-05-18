@@ -43,13 +43,14 @@
     <!-- btn文本 -->
     <string name="no_resources">暂无资源</string>
     <!-- msg文本 -->
-    <string name="no_region_msg">地区：未知</string>
-    <string name="no_year_msg">年代：未知</string>
-    <string name="no_tag_msg">标签：未知</string>
-    <string name="no_show_msg">简介：未知</string>
-    <string name="no_state_msg">状态：未知</string>
-    <string name="no_project_msg">制作：未知</string>
-    <string name="no_eye_msg">看点：未知</string>
+    <string name="desc_toolbar_title">番剧详情</string>
+    <string name="no_region_msg">地区：Null</string>
+    <string name="no_year_msg">年代：Null</string>
+    <string name="no_tag_msg">标签：Null</string>
+    <string name="no_show_msg">简介：Null</string>
+    <string name="no_state_msg">状态：Null</string>
+    <string name="no_project_msg">制作：Null</string>
+    <string name="no_eye_msg">看点：Null</string>
     <string name="project_msg">制作：</string>
     <string name="eye_msg">看点：</string>
     <string name="parsing">解析中，请稍后&#8230;</string>
@@ -131,7 +132,7 @@
     <string name="download">下载中,请等待</string>
     <string name="download_error">下载失败</string>
     <string name="final_compile">最后编译日期</string>
-    <string name="final_compile_time">2020年4月30日</string>
+    <string name="final_compile_time">2020年5月18日</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SilisiliAnime/\n卸载后自行删除此目录</string>
     <string name="github">Github</string>

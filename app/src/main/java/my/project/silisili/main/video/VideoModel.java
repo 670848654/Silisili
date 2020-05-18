@@ -1,6 +1,7 @@
 package my.project.silisili.main.video;
 
 import android.util.Log;
+import android.webkit.URLUtil;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -32,7 +33,8 @@ public class VideoModel implements VideoContract.Model {
                 String fid = DatabaseUtil.getAnimeID(title);
                 DatabaseUtil.addIndex(fid, HTML_url.replaceAll(Silisili.DOMAIN, ""));
                 String iframeUrl = doc.select("iframe").attr("src");
-                if (iframeUrl.isEmpty()) callback.empty();
+                Log.e("iframeUrl",iframeUrl);
+                if (iframeUrl.isEmpty() ||  !URLUtil.isValidUrl(iframeUrl)) callback.empty();
                 else {
                     // 解析
                     String host = iframeUrl;

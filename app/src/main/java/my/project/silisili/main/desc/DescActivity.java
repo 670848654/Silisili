@@ -5,9 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -33,6 +32,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.fanchen.sniffing.SniffingUICallback;
 import com.fanchen.sniffing.SniffingVideo;
 import com.fanchen.sniffing.web.SniffingUtil;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.r0adkll.slidr.Slidr;
@@ -71,20 +72,22 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     RecyclerView recommendRv;
     @BindView(R.id.anime_img)
     ImageView animeImg;
+    @BindView(R.id.title)
+    AppCompatTextView title;
     @BindView(R.id.region)
     AppCompatTextView region;
     @BindView(R.id.year)
     AppCompatTextView year;
     @BindView(R.id.tag)
     AppCompatTextView tag;
-    @BindView(R.id.show)
-    AppCompatTextView show;
     @BindView(R.id.desc)
     AppCompatTextView desc;
     @BindView(R.id.state)
     AppCompatTextView state;
     @BindView(R.id.error_bg)
     RelativeLayout errorBg;
+    @BindView(R.id.desc_layout)
+    LinearLayout descLinearLayout;
     @BindView(R.id.play_layout)
     LinearLayout playLinearLayout;
     @BindView(R.id.recommend_layout)
@@ -111,7 +114,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     private List<String> animeUrlList = new ArrayList();
     private boolean mIsLoad = false;
     private List<DownBean> downBeanList;
-    private MenuItem downView;
     private BottomSheetDialog mBottomSheetDialog;
     private AnimeDescDramaAdapter animeDescDramaAdapter;
     @BindView(R.id.msg)
@@ -119,6 +121,14 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @BindView(R.id.error_msg)
     TextView error_msg;
     private ImageView closeDrama;
+    @BindView(R.id.operation)
+    LinearLayout operation;
+    @BindView(R.id.down)
+    AppCompatTextView down;
+    @BindView(R.id.appBarLayout)
+    AppBarLayout appBarLayout;
+    @BindView(R.id.desc_view)
+    LinearLayout desc_view;
 
     @Override
     protected DescPresenter createPresenter() {
@@ -142,6 +152,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         Slidr.attach(this, Utils.defaultInit());
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) msg.getLayoutParams();
         params.setMargins(0, 0, 0, Utils.getNavigationBarHeight(this) - 5);
+        setCollapsingToolbarLayoutHeight();
         getBundle();
         initToolbar();
         initFab();
@@ -154,6 +165,13 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         SwipeBackLayoutUtil.convertActivityToTranslucent(this);
     }
 
+    private void setCollapsingToolbarLayoutHeight() {
+        appBarLayout.setLayoutParams(new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, Utils.getActionBarHeight() + Utils.getStatusBarHeight() + Utils.dpToPx(this,180)));
+        CollapsingToolbarLayout.LayoutParams params2 = (CollapsingToolbarLayout.LayoutParams) desc_view.getLayoutParams();
+        int marginSize = Utils.dpToPx(this, 10);
+        params2.setMargins(marginSize, Utils.getActionBarHeight() + Utils.getStatusBarHeight() + marginSize, marginSize, marginSize);
+    }
+
     public void getBundle() {
         Bundle bundle = getIntent().getExtras();
         if (!bundle.isEmpty()) {
@@ -164,7 +182,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     }
 
     public void initToolbar() {
-        toolbar.setTitle(Utils.getString(R.string.loading));
+        int test = Utils.pxTodp(this, Utils.getStatusBarHeight());
+        Log.e("actionBarHeight", Utils.getActionBarHeight()+ "");
+        Log.e("pxTodp", test+"");
+        toolbar.setTitle(Utils.getString(R.string.desc_toolbar_title));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(view -> finish());
@@ -237,22 +258,36 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
     @SuppressLint("RestrictedApi")
     public void openAnimeDesc() {
-        toolbar.setTitle(Utils.getString(R.string.loading));
         animeImg.setImageDrawable(getDrawable(R.drawable.loading));
-        region.setText("");
-        year.setText("");
-        tag.setText("");
-        show.setText("");
-        desc.setText("");
-        state.setText("");
+        setTextviewEmpty(title);
+        setTextviewEmpty(region);
+        setTextviewEmpty(year);
+        setTextviewEmpty(tag);
+        setTextviewEmpty(desc);
+        setTextviewEmpty(state);
         mSwipe.setRefreshing(true);
         imageView.setImageDrawable(null);
         animeDescBeans = new AnimeDescBean();
-        favorite.setVisibility(View.GONE);
+        operation.setVisibility(View.GONE);
         mPresenter = new DescPresenter(siliUrl, this);
         mPresenter.loadData(true);
     }
 
+    private void setTextviewEmpty(AppCompatTextView appCompatTextView) {
+        appCompatTextView.setText("");
+    }
+
+    @OnClick({R.id.down, R.id.open})
+    public void imgClicked(AppCompatTextView appCompatTextView) {
+        switch (appCompatTextView.getId()) {
+            case R.id.down:
+                showDownDialog();
+                break;
+            case R.id.open:
+                Utils.viewInChrome(this, siliUrl);
+                break;
+        }
+    }
     public void playVideo(BaseQuickAdapter adapter, int position, AnimeDescDetailsBean bean, RecyclerView recyclerView) {
         p = Utils.getProDialog(DescActivity.this, R.string.parsing);
         Button v = (Button) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
@@ -285,6 +320,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                     break;
             }
         } else {
+            p = Utils.getProDialog(DescActivity.this, R.string.parsing);
             application.showToastMsg(Utils.getString(R.string.should_be_used_web));
             SniffingUtil.get().activity(this).referer(animeUrl).callback(this).url(animeUrl).start();
         }
@@ -335,14 +371,14 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                         .into(imageView);
             }
         });
-        toolbar.setTitle(animeDescHeaderBean.getName());
         Utils.setDefaultImage(this, animeDescHeaderBean.getImg(), animeImg);
+        title.setText(animeDescHeaderBean.getName());
         region.setText(animeDescHeaderBean.getRegion().equals("地区：") ? Utils.getString(R.string.no_region_msg) : animeDescHeaderBean.getRegion());
         year.setText(animeDescHeaderBean.getYear().equals("年代：") ? Utils.getString(R.string.no_year_msg) : animeDescHeaderBean.getYear());
-        tag.setText(animeDescHeaderBean.getTag().equals("标签：") ? Utils.getString(R.string.no_tag_msg) : animeDescHeaderBean.getTag());
-        show.setText(animeDescHeaderBean.getShow().equals("看点：") ? Utils.getString(R.string.no_eye_msg) : animeDescHeaderBean.getShow());
-        desc.setText(animeDescHeaderBean.getDesc().equals("简介：") ? Utils.getString(R.string.no_show_msg) : animeDescHeaderBean.getDesc());
+        tag.setText(animeDescHeaderBean.getTag().equals("标签：") ? Utils.getString(R.string.no_tag_msg) : animeDescHeaderBean.getTag().replaceAll("\\|", " ").replaceAll(",", " "));
+        desc.setText( animeDescHeaderBean.getDesc().replaceAll("简介：",""));
         state.setText(animeDescHeaderBean.getState().equals("状态：") ? Utils.getString(R.string.no_state_msg) : animeDescHeaderBean.getState());
+        operation.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -360,6 +396,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 mIsLoad = false;
                 mSwipe.setRefreshing(false);
                 setCollapsingToolbar();
+                descLinearLayout.setVisibility(View.GONE);
                 playLinearLayout.setVisibility(View.GONE);
                 recommendLinearLayout.setVisibility(View.GONE);
                 error_msg.setText(msg);
@@ -371,31 +408,11 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @Override
     public void showEmptyVIew() {
         mSwipe.setRefreshing(true);
-        if (downView != null && downView.isVisible())
-            downView.setVisible(false);
+        down.setVisibility(View.GONE);
+        descLinearLayout.setVisibility(View.GONE);
         playLinearLayout.setVisibility(View.GONE);
         recommendLinearLayout.setVisibility(View.GONE);
         errorBg.setVisibility(View.GONE);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.down:
-                showDownDialog();
-                break;
-            case R.id.open_in_browser:
-                Utils.viewInChrome(this, siliUrl);
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.desc_menu, menu);
-        downView = menu.findItem(R.id.down);
-        return true;
     }
 
     private void showDownDialog() {
@@ -422,6 +439,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 mIsLoad = false;
                 setCollapsingToolbar();
                 mSwipe.setRefreshing(false);
+                descLinearLayout.setVisibility(View.VISIBLE);
                 playLinearLayout.setVisibility(View.VISIBLE);
                 recommendLinearLayout.setVisibility(View.VISIBLE);
                 this.animeDescBeans = bean;
@@ -464,8 +482,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void showDownView(List<DownBean> list) {
         runOnUiThread(() -> {
             downBeanList = list;
-            if (downView != null)
-                downView.setVisible(true);
+            down.setVisibility(View.VISIBLE);
         });
     }
 
@@ -490,6 +507,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @Override
     public void getVideoEmpty() {
         runOnUiThread(() -> {
+            cancelDialog();
             application.showToastMsg(Utils.getString(R.string.open_web_view));
             VideoUtils.openDefaultWebview(this, dramaUrl);
         });
@@ -498,7 +516,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @Override
     public void getVideoError() {
         //网络出错
-        runOnUiThread(() -> application.showErrorToastMsg(Utils.getString(R.string.error_700)));
+        runOnUiThread(() -> {
+            cancelDialog();
+            application.showErrorToastMsg(Utils.getString(R.string.error_700));
+        });
     }
 
     @Override

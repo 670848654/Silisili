@@ -15,16 +15,17 @@ public class FragmentAdapter extends BaseQuickAdapter<HomeWekBean,BaseViewHolder
     private Context context;
 
     public FragmentAdapter(Context context, List<HomeWekBean> data) {
-        super(R.layout.item_home_week, data);
+        super(R.layout.item_week, data);
         this.context = context;
     }
 
     @Override
     protected void convert(BaseViewHolder helper, HomeWekBean item) {
-        Utils.setCircleImage(context, item.getImg().startsWith("http") ? item.getImg() : my.project.silisili.application.Silisili.DOMAIN + item.getImg(),helper.getView(R.id.img));
+        Utils.setDefaultImage(context, item.getImg().startsWith("http") ? item.getImg() : my.project.silisili.application.Silisili.DOMAIN + item.getImg(),helper.getView(R.id.img));
         helper.setText(R.id.title, item.getTitle());
         helper.setText(R.id.drama, item.getDrama());
-        if (item.isHasNew()) helper.setVisible(R.id.new_img, true);
-        else helper.setVisible(R.id.new_img, false);
+        Utils.setCardBg(context, item.getImg().startsWith("http") ? item.getImg() : my.project.silisili.application.Silisili.DOMAIN + item.getImg(), helper.getView(R.id.card_view), helper.getView(R.id.title));
+        if (item.isHasNew()) helper.setVisible(R.id.new_view, true);
+        else helper.setVisible(R.id.new_view, false);
     }
 }
