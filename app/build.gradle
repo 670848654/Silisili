@@ -7,8 +7,8 @@ android {
         applicationId "my.project.silisili"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 4
-        versionName "1.0-beta4"
+        versionCode 5
+        versionName "1.0-beta5"
         ndk { abiFilters "armeabi" }
         resConfigs "zh"
     }

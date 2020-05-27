@@ -167,9 +167,9 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
      * @param animeUrl
      */
     private void playAnime(String animeUrl) {
+        cancelDialog();
         url = animeUrl;
         if (url.contains(".mp4") || url.contains(".m3u8")) {
-            cancelDialog();
             switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
                 case 0:
                     //调用播放器
@@ -183,6 +183,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
                     break;
             }
         }else {
+            p = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
             application.showToastMsg(Utils.getString(R.string.should_be_used_web));
             SniffingUtil.get().activity(this).referer(animeUrl).callback(this).url(animeUrl).start();
         }
@@ -336,7 +337,6 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         VideoUtils.showMultipleVideoSources(this,
                 urls,
                 (dialog, index) -> playAnime(urls.get(index)), (dialog, which) -> {
-                    cancelDialog();
                     dialog.dismiss();
                 }, 1);
     }

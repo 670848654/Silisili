@@ -308,8 +308,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
      * @param animeUrl
      */
     private void playAnime(String animeUrl) {
+        cancelDialog();
         if (animeUrl.contains(".mp4") || animeUrl.contains(".m3u8")) {
-            cancelDialog();
             switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
                 case 0:
                     //调用播放器
@@ -548,7 +548,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         VideoUtils.showMultipleVideoSources(this,
                 urls,
                 (dialog, index) -> playAnime(urls.get(index)), (dialog, which) -> {
-                    cancelDialog();
                     dialog.dismiss();
                 }, 1);
     }
