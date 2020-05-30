@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -14,7 +16,25 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
+import com.bumptech.glide.request.transition.Transition;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.fanchen.sniffing.SniffingUICallback;
+import com.fanchen.sniffing.SniffingVideo;
+import com.fanchen.sniffing.web.SniffingUtil;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.r0adkll.slidr.Slidr;
+import com.zhouwei.blurlibrary.EasyBlur;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -24,26 +44,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.fanchen.sniffing.SniffingUICallback;
-import com.fanchen.sniffing.SniffingVideo;
-import com.fanchen.sniffing.web.SniffingUtil;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.r0adkll.slidr.Slidr;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.OnClick;
-import jp.wasabeef.blurry.Blurry;
 import my.project.silisili.R;
 import my.project.silisili.adapter.AnimeDescDetailsAdapter;
 import my.project.silisili.adapter.AnimeDescDramaAdapter;
@@ -72,8 +74,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     RecyclerView recommendRv;
     @BindView(R.id.anime_img)
     ImageView animeImg;
-    @BindView(R.id.title)
-    AppCompatTextView title;
     @BindView(R.id.region)
     AppCompatTextView region;
     @BindView(R.id.year)
@@ -86,8 +86,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     AppCompatTextView state;
     @BindView(R.id.error_bg)
     RelativeLayout errorBg;
-    @BindView(R.id.desc_layout)
-    LinearLayout descLinearLayout;
     @BindView(R.id.play_layout)
     LinearLayout playLinearLayout;
     @BindView(R.id.recommend_layout)
@@ -100,14 +98,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @BindView(R.id.mSwipe)
     SwipeRefreshLayout mSwipe;
     private AnimeDescBean animeDescBeans = new AnimeDescBean();
-    @BindView(R.id.title_img)
-    ImageView imageView;
     private String siliUrl, dramaUrl;
     private String animeTitle;
     private String witchTitle;
     private ProgressDialog p;
-    @BindView(R.id.favorite)
-    FloatingActionButton favorite;
     private boolean isFavorite;
     private VideoPresenter videoPresenter;
     private AnimeDescHeaderBean animeDescHeaderBean = new AnimeDescHeaderBean();
@@ -121,14 +115,11 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @BindView(R.id.error_msg)
     TextView error_msg;
     private ImageView closeDrama;
-    @BindView(R.id.operation)
-    LinearLayout operation;
-    @BindView(R.id.down)
-    AppCompatTextView down;
-    @BindView(R.id.appBarLayout)
-    AppBarLayout appBarLayout;
     @BindView(R.id.desc_view)
     LinearLayout desc_view;
+    @BindView(R.id.bg)
+    ImageView bg;
+    private MenuItem downView, favorite;
 
     @Override
     protected DescPresenter createPresenter() {
@@ -148,14 +139,13 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @Override
     protected void init() {
         StatusBarUtil.setColorForSwipeBack(this, getResources().getColor(R.color.colorPrimaryDark), 0);
-        StatusBarUtil.setTranslucentForImageView(this, 0, toolbar);
+        StatusBarUtil.setTranslucentForImageViewInFragment(this, 0, toolbar);
+        if ((Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false)) bg.setVisibility(View.GONE);
         Slidr.attach(this, Utils.defaultInit());
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) msg.getLayoutParams();
-        params.setMargins(0, 0, 0, Utils.getNavigationBarHeight(this) - 5);
-        setCollapsingToolbarLayoutHeight();
+        params.setMargins(0, 0, 0, Utils.getNavigationBarHeight(this) - 15);
         getBundle();
         initToolbar();
-        initFab();
         initSwipe();
         initAdapter();
     }
@@ -163,13 +153,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @Override
     protected void initBeforeView() {
         SwipeBackLayoutUtil.convertActivityToTranslucent(this);
-    }
-
-    private void setCollapsingToolbarLayoutHeight() {
-        appBarLayout.setLayoutParams(new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, Utils.getActionBarHeight() + Utils.getStatusBarHeight() + Utils.dpToPx(this,180)));
-        CollapsingToolbarLayout.LayoutParams params2 = (CollapsingToolbarLayout.LayoutParams) desc_view.getLayoutParams();
-        int marginSize = Utils.dpToPx(this, 10);
-        params2.setMargins(marginSize, Utils.getActionBarHeight() + Utils.getStatusBarHeight() + marginSize, marginSize, marginSize);
     }
 
     public void getBundle() {
@@ -182,19 +165,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     }
 
     public void initToolbar() {
-        int test = Utils.pxTodp(this, Utils.getStatusBarHeight());
-        Log.e("actionBarHeight", Utils.getActionBarHeight()+ "");
-        Log.e("pxTodp", test+"");
-        toolbar.setTitle(Utils.getString(R.string.desc_toolbar_title));
+        toolbar.setTitle(Utils.getString(R.string.loading));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(view -> finish());
-    }
-
-    public void initFab() {
-        favorite.setOnClickListener(view -> {
-            if (Utils.isFastClick()) favoriteAnime();
-        });
     }
 
     public void initSwipe() {
@@ -224,6 +198,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             openAnimeDesc();
         });
         recommendRv.setLayoutManager(getLinearLayoutManager());
+        if (Utils.checkHasNavigationBar(this)) recommendRv.setPadding(0,0,0, Utils.getNavigationBarHeight(this));
         recommendRv.setAdapter(animeDescRecommendAdapter);
         recommendRv.setNestedScrollingEnabled(false);
 
@@ -252,23 +227,26 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
     @OnClick(R.id.open_drama)
     public void dramaClick() {
-        if (!mBottomSheetDialog.isShowing()) mBottomSheetDialog.show();
+        if (!mBottomSheetDialog.isShowing()) {
+            mBottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
+            mBottomSheetDialog.show();
+        }
     }
 
 
     @SuppressLint("RestrictedApi")
     public void openAnimeDesc() {
         animeImg.setImageDrawable(getDrawable(R.drawable.loading));
-        setTextviewEmpty(title);
+        toolbar.setTitle(Utils.getString(R.string.loading));
         setTextviewEmpty(region);
         setTextviewEmpty(year);
         setTextviewEmpty(tag);
         setTextviewEmpty(desc);
         setTextviewEmpty(state);
         mSwipe.setRefreshing(true);
-        imageView.setImageDrawable(null);
         animeDescBeans = new AnimeDescBean();
-        operation.setVisibility(View.GONE);
+        favorite.setVisible(false);
+        bg.setImageDrawable(getResources().getDrawable(R.drawable.default_bg));
         mPresenter = new DescPresenter(siliUrl, this);
         mPresenter.loadData(true);
     }
@@ -277,17 +255,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         appCompatTextView.setText("");
     }
 
-    @OnClick({R.id.down, R.id.open})
-    public void imgClicked(AppCompatTextView appCompatTextView) {
-        switch (appCompatTextView.getId()) {
-            case R.id.down:
-                showDownDialog();
-                break;
-            case R.id.open:
-                Utils.viewInChrome(this, siliUrl);
-                break;
-        }
-    }
     public void playVideo(BaseQuickAdapter adapter, int position, AnimeDescDetailsBean bean, RecyclerView recyclerView) {
         p = Utils.getProDialog(DescActivity.this, R.string.parsing);
         Button v = (Button) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
@@ -351,10 +318,12 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         setResult(200);
         isFavorite = DatabaseUtil.favorite(animeDescHeaderBean);
         if (isFavorite) {
-            Glide.with(DescActivity.this).load(R.drawable.baseline_favorite_white_48dp).into(favorite);
+            favorite.setIcon(R.drawable.baseline_star_white_48dp);
+            favorite.setTitle(Utils.getString(R.string.remove_favorite));
             application.showSnackbarMsg(msg, Utils.getString(R.string.join_ok));
         } else {
-            Glide.with(DescActivity.this).load(R.drawable.baseline_favorite_border_white_48dp).into(favorite);
+            favorite.setIcon(R.drawable.baseline_star_border_white_48dp);
+            favorite.setTitle(Utils.getString(R.string.favorite));
             application.showSnackbarMsg(msg, Utils.getString(R.string.join_error));
         }
     }
@@ -362,23 +331,58 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void setCollapsingToolbar() {
         Glide.with(DescActivity.this).asBitmap().load(animeDescHeaderBean.getImg()).into(new SimpleTarget<Bitmap>() {
             @Override
-            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                Blurry.with(DescActivity.this)
-                        .radius(4)
-                        .sampling(2)
-                        .async()
-                        .from(resource)
-                        .into(imageView);
+            public void onResourceReady(Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                if (resource != null) {
+                    DrawableCrossFadeFactory drawableCrossFadeFactory = new DrawableCrossFadeFactory.Builder(300).setCrossFadeEnabled(true).build();
+                    RequestOptions options = new RequestOptions()
+                            .centerCrop()
+                            .placeholder(R.drawable.default_bg)
+                            .error(R.drawable.default_bg)
+                            .format(DecodeFormat.PREFER_RGB_565);
+                    Glide.with(DescActivity.this)
+                            .load(new BitmapDrawable(DescActivity.this.getResources(), EasyBlur.with(DescActivity.this)
+                                    .bitmap(resource) //要模糊的图片
+                                    .radius(10)//模糊半径
+                                    .scale(4)//指定模糊前缩小的倍数
+                                    .policy(EasyBlur.BlurPolicy.FAST_BLUR)//使用fastBlur
+                                    .blur()))
+                            .transition(DrawableTransitionOptions.withCrossFade(drawableCrossFadeFactory))
+                            .apply(options)
+                            .into(bg);
+                }
             }
         });
         Utils.setDefaultImage(this, animeDescHeaderBean.getImg(), animeImg);
-        title.setText(animeDescHeaderBean.getName());
+        toolbar.setTitle(animeDescHeaderBean.getName());
         region.setText(animeDescHeaderBean.getRegion().equals("地区：") ? Utils.getString(R.string.no_region_msg) : animeDescHeaderBean.getRegion());
         year.setText(animeDescHeaderBean.getYear().equals("年代：") ? Utils.getString(R.string.no_year_msg) : animeDescHeaderBean.getYear());
         tag.setText(animeDescHeaderBean.getTag().equals("标签：") ? Utils.getString(R.string.no_tag_msg) : animeDescHeaderBean.getTag().replaceAll("\\|", " ").replaceAll(",", " "));
-        desc.setText( animeDescHeaderBean.getDesc().replaceAll("简介：",""));
+        desc.setText( animeDescHeaderBean.getDesc());
         state.setText(animeDescHeaderBean.getState().equals("状态：") ? Utils.getString(R.string.no_state_msg) : animeDescHeaderBean.getState());
-        operation.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.down:
+                if (Utils.isFastClick()) showDownDialog();
+                break;
+            case R.id.open_in_browser:
+                if (Utils.isFastClick()) Utils.viewInChrome(this, siliUrl);
+                break;
+            case R.id.favorite:
+                if (Utils.isFastClick()) favoriteAnime();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.desc_menu, menu);
+        downView = menu.findItem(R.id.down);
+        favorite = menu.findItem(R.id.favorite);
+        return true;
     }
 
     @Override
@@ -396,7 +400,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 mIsLoad = false;
                 mSwipe.setRefreshing(false);
                 setCollapsingToolbar();
-                descLinearLayout.setVisibility(View.GONE);
                 playLinearLayout.setVisibility(View.GONE);
                 recommendLinearLayout.setVisibility(View.GONE);
                 error_msg.setText(msg);
@@ -408,8 +411,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @Override
     public void showEmptyVIew() {
         mSwipe.setRefreshing(true);
-        down.setVisibility(View.GONE);
-        descLinearLayout.setVisibility(View.GONE);
+        if (downView != null && downView.isVisible())
+            downView.setVisible(false);
+        if (favorite != null && favorite.isVisible())
+            favorite.setVisible(false);
         playLinearLayout.setVisibility(View.GONE);
         recommendLinearLayout.setVisibility(View.GONE);
         errorBg.setVisibility(View.GONE);
@@ -439,7 +444,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 mIsLoad = false;
                 setCollapsingToolbar();
                 mSwipe.setRefreshing(false);
-                descLinearLayout.setVisibility(View.VISIBLE);
                 playLinearLayout.setVisibility(View.VISIBLE);
                 recommendLinearLayout.setVisibility(View.VISIBLE);
                 this.animeDescBeans = bean;
@@ -466,13 +470,15 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         isFavorite = is;
         runOnUiThread(() -> {
             if (!mActivityFinish) {
-                if (!favorite.isShown()) {
-                    if (isFavorite)
-                        Glide.with(DescActivity.this).load(R.drawable.baseline_favorite_white_48dp).into(favorite);
-                    else
-                        Glide.with(DescActivity.this).load(R.drawable.baseline_favorite_border_white_48dp).into(favorite);
-                    favorite.startAnimation(Utils.animationOut(1));
-                    favorite.setVisibility(View.VISIBLE);
+                if (!favorite.isVisible()) {
+                    if (isFavorite) {
+                        favorite.setIcon(R.drawable.baseline_star_white_48dp);
+                        favorite.setTitle(Utils.getString(R.string.remove_favorite));
+                    } else {
+                        favorite.setIcon(R.drawable.baseline_star_border_white_48dp);
+                        favorite.setTitle(Utils.getString(R.string.favorite));
+                    }
+                    favorite.setVisible(true);
                 }
             }
         });
@@ -482,7 +488,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void showDownView(List<DownBean> list) {
         runOnUiThread(() -> {
             downBeanList = list;
-            down.setVisibility(View.VISIBLE);
+            if (downView != null)
+                downView.setVisible(true);
         });
     }
 

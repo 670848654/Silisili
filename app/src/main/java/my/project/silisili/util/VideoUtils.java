@@ -6,11 +6,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AlertDialog;
-
 import java.io.Serializable;
 import java.util.List;
 
+import androidx.appcompat.app.AlertDialog;
 import my.project.silisili.R;
 import my.project.silisili.application.Silisili;
 import my.project.silisili.bean.AnimeDescDetailsBean;

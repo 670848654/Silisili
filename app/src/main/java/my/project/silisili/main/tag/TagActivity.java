@@ -3,12 +3,6 @@ package my.project.silisili.main.tag;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.r0adkll.slidr.Slidr;
@@ -16,6 +10,11 @@ import com.r0adkll.slidr.Slidr;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import my.project.silisili.R;
 import my.project.silisili.adapter.TagAdapter;
@@ -93,7 +92,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
             bundle.putString("url", VideoUtils.getSiliUrl(bean.getUrl()));
             startActivity(new Intent(TagActivity.this, AnimeListActivity.class).putExtras(bundle));
         });
-        if (Utils.checkHasNavigationBar(this)) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this) - 5);
+        if (Utils.checkHasNavigationBar(this)) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this));
         mRecyclerView.setAdapter(adapter);
     }
 

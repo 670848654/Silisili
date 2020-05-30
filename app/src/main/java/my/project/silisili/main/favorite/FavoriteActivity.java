@@ -5,19 +5,18 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import androidx.appcompat.widget.PopupMenu;
-import androidx.appcompat.widget.Toolbar;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.r0adkll.slidr.Slidr;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.widget.PopupMenu;
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import my.project.silisili.R;
 import my.project.silisili.adapter.FavoriteListAdapter;
@@ -60,7 +59,7 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
     protected void init() {
         Slidr.attach(this,Utils.defaultInit());
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) show.getLayoutParams();
-        params.setMargins(0, 0, 0, Utils.getNavigationBarHeight(this) - 5);
+        params.setMargins(0, 0, 0, Utils.getNavigationBarHeight(this));
         initToolbar();
         initSwipe();
         initAdapter();
@@ -112,7 +111,7 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
             popupMenu.show();
             return true;
         });
-        if (Utils.checkHasNavigationBar(this)) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this) - 5);
+        if (Utils.checkHasNavigationBar(this)) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this));
         mRecyclerView.setAdapter(adapter);
     }
 

@@ -7,12 +7,11 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
 import org.json.JSONObject;
 
 import java.io.IOException;
 
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import butterknife.BindView;
 import my.project.silisili.R;
 import my.project.silisili.api.Api;
@@ -52,6 +51,7 @@ public class StartActivity extends BaseActivity {
 
     @Override
     protected void init() {
+        StatusBarUtil.setTranslucentForCoordinatorLayout(this, 0);
         StatusBarUtil.setTranslucentForImageView(this, 0, coordinatorLayout);
         SharedPreferencesUtils.setParam(this,"initX5","init");
         RelativeLayout.LayoutParams Params = (RelativeLayout.LayoutParams) linearLayout.getLayoutParams();

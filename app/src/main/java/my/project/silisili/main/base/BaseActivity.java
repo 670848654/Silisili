@@ -8,12 +8,11 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
-import java.util.List;
-
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import my.project.silisili.R;
@@ -174,6 +173,9 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
     @Override
     public void finish() {
         super.finish();
-        if (!getRunningActivityName().equals("StartActivity") && !getRunningActivityName().equals("HomeActivity")) overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        runOnUiThread(() -> {
+            if (!getRunningActivityName().equals("StartActivity") && !getRunningActivityName().equals("HomeActivity") && !getRunningActivityName().equals("PlayerActivity"))
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        });
     }
 }
