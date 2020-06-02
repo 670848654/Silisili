@@ -133,7 +133,7 @@
     <string name="download">下载中,请等待</string>
     <string name="download_error">下载失败</string>
     <string name="final_compile">最后编译日期</string>
-    <string name="final_compile_time">2020年5月30日</string>
+    <string name="final_compile_time">2020年6月2日</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SilisiliAnime/\n卸载后自行删除此目录</string>
     <string name="github">Github</string>

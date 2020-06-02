@@ -66,7 +66,7 @@ public class HomeModel implements HomeContract.Model {
         for (int i = 0, size = els.size(); i < size; i++) {
             JSONObject object = new JSONObject();
             object.put("title", els.get(i).select("img").attr("alt"));
-            object.put("img", els.get(i).select("img").attr("src"));
+            object.put("img", els.get(i).select("img").attr("data-src"));
             object.put("url", els.get(i).select("a").attr("href"));
             object.put("drama", els.get(i).select("i") == null ? "" : els.get(i).select("i").text());
             object.put("new", els.get(i).select("b").text().equals("new"));
