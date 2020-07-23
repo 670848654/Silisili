@@ -166,6 +166,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("1.0-beta8", "2020年7月23日", "修复番剧详情显示不正常的问题"));
         logsList.add(new LogBean("1.0-beta7", "2020年6月2日", "修复首页图片无法正常显示"));
         logsList.add(new LogBean("1.0-beta6", "2020年5月30日", "修复一些Bug\n优化番剧详情界面\n内置播放器新增屏幕锁定、快进、后退操作"));
         logsList.add(new LogBean("1.0-beta5", "2020年5月27日", "修复解析时弹窗不关闭的问题"));

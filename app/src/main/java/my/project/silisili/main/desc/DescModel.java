@@ -63,14 +63,13 @@ public class DescModel implements DescContract.Model {
                                 bean.setTag(desc.text());
                             else if (desc.text().contains("状态"))
                                 bean.setState(desc.text());
-
                         }
                         for (Element desc : desc2) {
                             if (desc.text().contains("看点"))
                                 bean.setShow(desc.text());
-                            if (desc.text().contains("简介"))
-                                bean.setDesc(desc.text());
                         }
+                        //简介
+                        bean.setDesc(detail.get(0).getElementById("content") == null ? "" : detail.get(0).getElementById("content").text());
                         callback.successDesc(bean);
 
                         Elements playDesc = doc.getElementsByClass("stitle").get(0).select("span >a");
