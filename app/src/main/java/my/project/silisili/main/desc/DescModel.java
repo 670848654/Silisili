@@ -51,25 +51,11 @@ public class DescModel implements DescContract.Model {
                         DatabaseUtil.addAnime(animeName);
                         fid = DatabaseUtil.getAnimeID(animeName);
                         dramaStr = DatabaseUtil.queryAllIndex(fid);
-                        Elements desc1 = detail.get(0).getElementsByClass("d_label");
-                        Elements desc2 = detail.get(0).getElementsByClass("d_label2");
+                        Elements tags = detail.get(0).getElementsByClass("d_label");
                         bean.setUrl(url);
-                        for (Element desc : desc1) {
-                            if (desc.text().contains("地区"))
-                                bean.setRegion(desc.text());
-                            else if (desc.text().contains("年代"))
-                                bean.setYear(desc.text());
-                            else if (desc.text().contains("标签"))
-                                bean.setTag(desc.text());
-                            else if (desc.text().contains("状态"))
-                                bean.setState(desc.text());
-                        }
-                        for (Element desc : desc2) {
-                            if (desc.text().contains("看点"))
-                                bean.setShow(desc.text());
-                        }
+                        setTags(tags, bean);
                         //简介
-                        bean.setDesc(detail.get(0).getElementById("content") == null ? "" : detail.get(0).getElementById("content").text());
+                        bean.setDesc(detail.get(0).getElementById("content") == null ? "" : detail.get(0).getElementById("content").text().replaceAll(".*()：", ""));
                         callback.successDesc(bean);
 
                         Elements playDesc = doc.getElementsByClass("stitle").get(0).select("span >a");
@@ -120,6 +106,41 @@ public class DescModel implements DescContract.Model {
                 }
             }
         });
+    }
+
+    public void setTags(Elements tags, AnimeDescHeaderBean bean) {
+        List<String> tagTitles = new ArrayList<>();
+        List<String> tagUrls = new ArrayList<>();
+        Element dq = tags.get(0);
+        tagTitles.add(dq.text().replaceAll(".*()：", ""));
+        tagUrls.add(dq.select("a").attr("href"));
+        Element nd = tags.get(1);
+        tagTitles.add(nd.text().replaceAll(".*()：", ""));
+        tagUrls.add(nd.select("a").attr("href"));
+        Element bq = tags.get(2);
+        String tagStr = bq.text().replaceAll(".*()：", "");
+        if (!tagStr.isEmpty()) {
+            if (tagStr.contains("|"))
+                for (String str : tagStr.split("\\|")) {
+                    tagTitles.add(str);
+                    tagUrls.add("");
+                }
+            else if (tagStr.contains(","))
+                for (String str : tagStr.split(",")) {
+                    tagTitles.add(str);
+                    tagUrls.add("");
+                }
+            else if (tagStr.contains(" "))
+                for (String str : tagStr.split(" ")) {
+                    tagTitles.add(str);
+                    tagUrls.add("");
+                }
+        }
+        Element zt = tags.get(3);
+        tagTitles.add(zt.text().replaceAll(".*()：", ""));
+        tagUrls.add("");
+        bean.setTagTitles(tagTitles);
+        bean.setTagUrls(tagUrls);
     }
 
     /**

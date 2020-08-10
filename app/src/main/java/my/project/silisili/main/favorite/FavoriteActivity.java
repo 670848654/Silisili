@@ -59,7 +59,7 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
     protected void init() {
         Slidr.attach(this,Utils.defaultInit());
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) show.getLayoutParams();
-        params.setMargins(0, 0, 0, Utils.getNavigationBarHeight(this));
+        params.setMargins(10, 0, 10, Utils.getNavigationBarHeight(this) - 5);
         initToolbar();
         initSwipe();
         initAdapter();
@@ -121,8 +121,6 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
     private void removeFavorite(int position){
         DatabaseUtil.deleteFavorite(favoriteList.get(position).getName());
         adapter.remove(position);
-//        application.showCustomToastMsg(Utils.getString(R.string.join_error),
-//                R.drawable.ic_remove_favorite_48dp, R.color.red300);
         application.showSnackbarMsg(show, Utils.getString(R.string.join_error));
         if (favoriteList.size() <= 0){
             errorTitle.setText(Utils.getString(R.string.empty_favorite));

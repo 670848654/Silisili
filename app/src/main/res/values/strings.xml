@@ -44,15 +44,7 @@
     <string name="no_resources">暂无资源</string>
     <!-- msg文本 -->
     <string name="desc_toolbar_title">番剧详情</string>
-    <string name="no_region_msg">地区：Null</string>
-    <string name="no_year_msg">年代：Null</string>
-    <string name="no_tag_msg">标签：Null</string>
-    <string name="no_show_msg">简介：Null</string>
-    <string name="no_state_msg">状态：Null</string>
-    <string name="no_project_msg">制作：Null</string>
-    <string name="no_eye_msg">看点：Null</string>
-    <string name="project_msg">制作：</string>
-    <string name="eye_msg">看点：</string>
+    <string name="no_tag_url">该标签无内容信息</string>
     <string name="parsing">解析中，请稍后&#8230;</string>
     <string name="error_700">网络错误，请重试!</string>
     <string name="error_800">未能获取到播放地址\n1、解析方法不支持\n2、播放地址不存在\n3、可以尝试打开原页面去播放</string>
@@ -96,7 +88,6 @@
     <string name="domain">域名设置 (备用)</string>
     <string name="domain_url">http://www.silisili.me</string>
     <string name="search_title">检索方式</string>
-    <string name="search_default">百度搜索</string>
     <string name="light">亮色主题</string>
     <string name="dark">暗色主题</string>
     <!-- webViewDialog 文本 -->
@@ -133,7 +124,7 @@
     <string name="download">下载中,请等待</string>
     <string name="download_error">下载失败</string>
     <string name="final_compile">最后编译日期</string>
-    <string name="final_compile_time">2020年7月23日</string>
+    <string name="final_compile_time">2020年8月10日</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SilisiliAnime/\n卸载后自行删除此目录</string>
     <string name="github">Github</string>

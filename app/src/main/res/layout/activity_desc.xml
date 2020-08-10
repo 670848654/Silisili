@@ -41,10 +41,9 @@
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:id="@+id/msg"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:background="@color/translucent"
-            app:layout_anchor="@id/mSwipe"
-            app:layout_anchorGravity="bottom" />
+            android:layout_height="wrap_content"
+            app:layout_anchor="@id/toolbar"
+            app:layout_anchorGravity="center" />
 
         <my.project.silisili.custom.MySwipeRefreshLayout
             android:id="@+id/mSwipe"
@@ -54,11 +53,10 @@
 
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:focusableInTouchMode="true">
+                android:layout_height="match_parent">
 
                 <LinearLayout
-                    android:clipChildren="false"
+                    android:clipChildren="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -92,56 +90,51 @@
                         <RelativeLayout
                             android:layout_width="0dp"
                             android:layout_height="250dp"
-                            android:clipChildren="false"
+                            android:clipChildren="true"
                             android:layout_marginTop="10dp"
                             android:layout_marginRight="10dp"
                             android:layout_marginBottom="10dp"
                             android:layout_weight="6">
 
-                            <LinearLayout
+                            <my.project.silisili.custom.InsideScrollView
+                                android:id="@+id/inside_view"
+                                android:scrollbars="none"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="vertical">
+                                android:layout_height="wrap_content">
 
-                                <androidx.appcompat.widget.AppCompatTextView
-                                    android:id="@+id/region"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textColor="@android:color/white"
-                                    android:textSize="14sp" />
-
-                                <androidx.appcompat.widget.AppCompatTextView
-                                    android:id="@+id/year"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textColor="@android:color/white"
-                                    android:textSize="14sp" />
-
-                                <androidx.appcompat.widget.AppCompatTextView
-                                    android:id="@+id/tag"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:maxLines="1"
-                                    android:ellipsize="end"
-                                    android:textColor="@android:color/white"
-                                    android:textSize="14sp" />
-
-                                <androidx.appcompat.widget.AppCompatTextView
-                                    android:id="@+id/state"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textColor="@android:color/white"
-                                    android:textSize="14sp" />
-
-                                <androidx.appcompat.widget.AppCompatTextView
-                                    android:id="@+id/desc"
+                                <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:maxLines="10"
-                                    android:ellipsize="end"
-                                    android:textColor="@android:color/white"
-                                    android:textSize="14sp" />
-                            </LinearLayout>
+                                    android:orientation="vertical">
+
+                                    <co.lujun.androidtagview.TagContainerLayout
+                                        android:id="@+id/tag_view"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_margin="0dp"
+                                        app:container_border_color="@color/translucent"
+                                        app:container_background_color="@color/translucent"
+                                        app:tag_corner_radius="4dp"
+                                        app:tag_text_color="@color/white"
+                                        app:tag_border_color="#73e55578"
+                                        app:tag_background_color="#73e55578"
+                                        app:tag_clickable="true"
+                                        app:tag_horizontal_padding="12dp"
+                                        app:tag_theme="none"/>
+
+                                    <androidx.appcompat.widget.AppCompatTextView
+                                        android:id="@+id/desc"
+                                        android:layout_marginTop="5dp"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:scrollbars="none"
+                                        android:textColor="@color/white"
+                                        android:textSize="14sp" />
+
+                                </LinearLayout>
+
+                            </my.project.silisili.custom.InsideScrollView>
+
                         </RelativeLayout>
 
                     </LinearLayout>

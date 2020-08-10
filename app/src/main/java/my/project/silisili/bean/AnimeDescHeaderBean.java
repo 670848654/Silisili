@@ -1,5 +1,7 @@
 package my.project.silisili.bean;
 
+import java.util.List;
+
 public class AnimeDescHeaderBean {
     // 名称
     private String name;
@@ -13,7 +15,26 @@ public class AnimeDescHeaderBean {
     private String tag = "";
     private String state = "";
     private String show = "";
+
     private String desc = "";
+    private List<String> tagTitles;
+    private List<String> tagUrls;
+
+    public List<String> getTagTitles() {
+        return tagTitles;
+    }
+
+    public void setTagTitles(List<String> tagTitles) {
+        this.tagTitles = tagTitles;
+    }
+
+    public List<String> getTagUrls() {
+        return tagUrls;
+    }
+
+    public void setTagUrls(List<String> tagUrls) {
+        this.tagUrls = tagUrls;
+    }
 
     public String getName() {
         return name;

@@ -98,7 +98,7 @@ public class AboutActivity extends BaseActivity {
         LinearLayout.LayoutParams Params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.getNavigationBarHeight(this));
         footer.setLayoutParams(Params);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) show.getLayoutParams();
-        params.setMargins(0, 0, 0, Utils.getNavigationBarHeight(this) - 15);
+        params.setMargins(10, 0, 10, Utils.getNavigationBarHeight(this) - 5);
         version.setText(Utils.getASVersionName());
         cache.setText(Environment.getExternalStorageDirectory() + Utils.getString(R.string.cache_text));
     }
@@ -166,6 +166,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("1.0-beta9", "2020年8月10日", "修复番剧列表分页Bug\n番剧详情界面布局修改"));
         logsList.add(new LogBean("1.0-beta8", "2020年7月23日", "修复番剧详情显示不正常的问题"));
         logsList.add(new LogBean("1.0-beta7", "2020年6月2日", "修复首页图片无法正常显示"));
         logsList.add(new LogBean("1.0-beta6", "2020年5月30日", "修复一些Bug\n优化番剧详情界面\n内置播放器新增屏幕锁定、快进、后退操作"));

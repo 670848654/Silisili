@@ -46,6 +46,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
+import co.lujun.androidtagview.TagContainerLayout;
+import co.lujun.androidtagview.TagView;
 import my.project.silisili.R;
 import my.project.silisili.adapter.AnimeDescDetailsAdapter;
 import my.project.silisili.adapter.AnimeDescDramaAdapter;
@@ -55,7 +57,9 @@ import my.project.silisili.bean.AnimeDescDetailsBean;
 import my.project.silisili.bean.AnimeDescHeaderBean;
 import my.project.silisili.bean.AnimeDescRecommendBean;
 import my.project.silisili.bean.DownBean;
+import my.project.silisili.custom.InsideScrollView;
 import my.project.silisili.database.DatabaseUtil;
+import my.project.silisili.main.animelist.AnimeListActivity;
 import my.project.silisili.main.base.BaseActivity;
 import my.project.silisili.main.video.VideoContract;
 import my.project.silisili.main.video.VideoPresenter;
@@ -74,16 +78,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     RecyclerView recommendRv;
     @BindView(R.id.anime_img)
     ImageView animeImg;
-    @BindView(R.id.region)
-    AppCompatTextView region;
-    @BindView(R.id.year)
-    AppCompatTextView year;
-    @BindView(R.id.tag)
-    AppCompatTextView tag;
     @BindView(R.id.desc)
     AppCompatTextView desc;
-    @BindView(R.id.state)
-    AppCompatTextView state;
     @BindView(R.id.error_bg)
     RelativeLayout errorBg;
     @BindView(R.id.play_layout)
@@ -120,6 +116,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @BindView(R.id.bg)
     ImageView bg;
     private MenuItem downView, favorite;
+    @BindView(R.id.tag_view)
+    TagContainerLayout tagContainerLayout;
+    @BindView(R.id.inside_view)
+    InsideScrollView scrollView;
 
     @Override
     protected DescPresenter createPresenter() {
@@ -143,11 +143,13 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         if ((Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false)) bg.setVisibility(View.GONE);
         Slidr.attach(this, Utils.defaultInit());
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) msg.getLayoutParams();
-        params.setMargins(0, 0, 0, Utils.getNavigationBarHeight(this) - 15);
+        params.setMargins(10, 0, 10, 0);
+        scrollView.getViewTreeObserver().addOnScrollChangedListener(() -> mSwipe.setEnabled(scrollView.getScrollY() == 0));
         getBundle();
         initToolbar();
         initSwipe();
         initAdapter();
+        initTagClick();
     }
 
     @Override
@@ -219,6 +221,37 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         closeDrama.setOnClickListener(v-> mBottomSheetDialog.dismiss());
     }
 
+    private void initTagClick() {
+        tagContainerLayout.setOnTagClickListener(new TagView.OnTagClickListener() {
+            @Override
+            public void onTagClick(int position, String text) {
+                if (animeDescHeaderBean.getTagUrls().get(position).isEmpty())
+                    application.showToastMsg(Utils.getString(R.string.no_tag_url));
+                else {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("title", animeDescHeaderBean.getTagTitles().get(position));
+                    bundle.putString("url", VideoUtils.getSiliUrl(animeDescHeaderBean.getTagUrls().get(position)));
+                    startActivity(new Intent(DescActivity.this, AnimeListActivity.class).putExtras(bundle));
+                }
+            }
+
+            @Override
+            public void onTagLongClick(int position, String text) {
+
+            }
+
+            @Override
+            public void onSelectedTagDrag(int position, String text) {
+
+            }
+
+            @Override
+            public void onTagCrossClick(int position) {
+
+            }
+        });
+    }
+
     private LinearLayoutManager getLinearLayoutManager() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
@@ -238,11 +271,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void openAnimeDesc() {
         animeImg.setImageDrawable(getDrawable(R.drawable.loading));
         toolbar.setTitle(Utils.getString(R.string.loading));
-        setTextviewEmpty(region);
-        setTextviewEmpty(year);
-        setTextviewEmpty(tag);
+        tagContainerLayout.setVisibility(View.GONE);
+        tagContainerLayout.setTags("");
         setTextviewEmpty(desc);
-        setTextviewEmpty(state);
         mSwipe.setRefreshing(true);
         animeDescBeans = new AnimeDescBean();
         favorite.setVisible(false);
@@ -354,11 +385,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         });
         Utils.setDefaultImage(this, animeDescHeaderBean.getImg(), animeImg);
         toolbar.setTitle(animeDescHeaderBean.getName());
-        region.setText(animeDescHeaderBean.getRegion().equals("地区：") ? Utils.getString(R.string.no_region_msg) : animeDescHeaderBean.getRegion());
-        year.setText(animeDescHeaderBean.getYear().equals("年代：") ? Utils.getString(R.string.no_year_msg) : animeDescHeaderBean.getYear());
-        tag.setText(animeDescHeaderBean.getTag().equals("标签：") ? Utils.getString(R.string.no_tag_msg) : animeDescHeaderBean.getTag().replaceAll("\\|", " ").replaceAll(",", " "));
-        desc.setText( animeDescHeaderBean.getDesc());
-        state.setText(animeDescHeaderBean.getState().equals("状态：") ? Utils.getString(R.string.no_state_msg) : animeDescHeaderBean.getState());
+        tagContainerLayout.setTags(animeDescHeaderBean.getTagTitles());
+        tagContainerLayout.setVisibility(View.VISIBLE);
+        desc.setText(animeDescHeaderBean.getDesc());
     }
 
     @Override

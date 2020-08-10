@@ -48,7 +48,7 @@ public class AnimeListModel implements AnimeListContract.Model{
                     if (animeList.size() > 0) {
                         if (isMain) {
                             Elements pages = body.select("div.page");
-                            if (pages.size() > 0) {
+                            if (!pages.get(0).text().isEmpty()) {
                                 String[] pageArr = pages.get(0).select("a").text().split(" ");
                                 callback.pageCount(Integer.parseInt(pageArr[pageArr.length - 3]));
                             }
