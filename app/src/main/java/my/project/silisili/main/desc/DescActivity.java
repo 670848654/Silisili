@@ -385,7 +385,11 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         });
         Utils.setDefaultImage(this, animeDescHeaderBean.getImg(), animeImg);
         toolbar.setTitle(animeDescHeaderBean.getName());
-        tagContainerLayout.setTags(animeDescHeaderBean.getTagTitles());
+        if (animeDescHeaderBean.getTagTitles() != null) {
+            tagContainerLayout.setTags(animeDescHeaderBean.getTagTitles());
+            tagContainerLayout.setVisibility(View.VISIBLE);
+        }else
+            tagContainerLayout.setVisibility(View.GONE);
         tagContainerLayout.setVisibility(View.VISIBLE);
         desc.setText(animeDescHeaderBean.getDesc());
     }

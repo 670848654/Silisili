@@ -28,7 +28,7 @@ public class AnimeListModel implements AnimeListContract.Model{
             //如果不是第一页
             if (url.contains("anime"))
                 url = url.contains(Silisili.DOMAIN) ? url + page : Silisili.DOMAIN + url + page;
-            else if (url.contains("riyu") || url.contains("gouyu") || url.contains("yingyu") || url.contains("yueyu"))
+            else if (url.contains("riyu") || url.contains("guoyu") || url.contains("yingyu") || url.contains("yueyu"))
                 url = url.contains(Silisili.DOMAIN) ? url + "index_" + page + ".html" : Silisili.DOMAIN + url + "index_" + page + ".html";
             else if (url.contains("tags"))
                 url = url.contains(Silisili.DOMAIN) ? url + "&page=" + page: Silisili.DOMAIN + url + "&page=" + page;
