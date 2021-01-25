@@ -5,7 +5,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="load_failed">加载失败，点击重试</string>
-    <string name="load_end">我是有底线的</string>
+    <string name="load_end">没有更多数据</string>
     <!-- 权限文本 -->
     <string name="permissions">为了正常使用，需要以下权限!</string>
     <string name="permissions_error">未能获取到相关权限!</string>
@@ -14,7 +14,6 @@
     <string name="home_tag_title">条件筛选</string>
     <string name="home_recommend_title">动漫推荐</string>
     <string name="home_favorite_title">我的收藏</string>
-    <string name="huaji">嘤嘤嘤嘤嘤 (。・∀・)ノ</string>
     <string name="menu_load_error">加载失败</string>
     <string name="exit_app">再按一次退出程序</string>
     <string name="search_hint">请输入动漫名</string>
@@ -65,7 +64,7 @@
     <string name="play_not_found_negative">取消</string>
     <!-- drawer文本 -->
     <string name="tag_title">动漫分类</string>
-    <string name="favorite_title">我的追番</string>
+    <string name="favorite_title">追番列表</string>
     <string name="setting_title">自定义</string>
     <!-- 设置界面文本 -->
     <string name="api">0</string>
@@ -86,7 +85,7 @@
     <string name="player">视频播放器</string>
     <string name="player_default">内置</string>
     <string name="domain">域名设置 (备用)</string>
-    <string name="domain_url">http://www.silisili.me</string>
+    <string name="domain_url">http://www.silisili.in</string>
     <string name="search_title">检索方式</string>
     <string name="light">亮色主题</string>
     <string name="dark">暗色主题</string>
@@ -124,7 +123,7 @@
     <string name="download">下载中,请等待</string>
     <string name="download_error">下载失败</string>
     <string name="final_compile">最后编译日期</string>
-    <string name="final_compile_time">2020年8月19日</string>
+    <string name="final_compile_time">2021年1月25日</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SilisiliAnime/\n卸载后自行删除此目录</string>
     <string name="github">Github</string>
@@ -137,6 +136,24 @@
     <string name="favoriteLongName">我的追番</string>
     <string name="searchShortName">搜索动漫</string>
     <string name="searchLongName">搜索动漫</string>
+    <!-- 播放器文本 -->
+    <string name="set_user_speed">设置快进/快退时长</string>
+    <string name="player_setting_title">播放器设置</string>
+    <string name="picture_in_picture_title">画中画</string>
+    <string name="player_other_title">其他操作</string>
+    <string name="play_with_external_player">使用外部播放器播放</string>
+    <string name="open_external_browser">通过浏览器访问原地址</string>
+    <string name="url_copied">下载地址已复制到剪切板</string>
+    <string name="select_tools">请选择下载工具</string>
+    <string name="tools_not_found">没有找到匹配的程序</string>
+
+    <string-array name="speed_item">
+        <item>5s</item>
+        <item>10s</item>
+        <item>15s</item>
+        <item>30s</item>
+    </string-array>
+
     <string-array name="week_array">
         <item>周一</item>
         <item>周二</item>

@@ -21,7 +21,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import my.project.silisili.R;
 import my.project.silisili.adapter.AnimeListAdapter;
-import my.project.silisili.application.Silisili;
 import my.project.silisili.bean.AnimeDescHeaderBean;
 import my.project.silisili.custom.CustomLoadMoreView;
 import my.project.silisili.main.base.BaseActivity;
@@ -125,8 +124,8 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
             AnimeDescHeaderBean bean = (AnimeDescHeaderBean) adapter.getItem(position);
-            if (bean.getUrl().contains("neta")) {
-                Silisili.getInstance().showErrorToastMsg("抱歉，该内容无法解析");
+            if (bean.getUrl().contains("nieta")) {
+                application.showErrorToastMsg("抱歉，该内容无法解析");
                 return;
             }
             Bundle bundle = new Bundle();

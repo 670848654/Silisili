@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/group1"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/new_anim"
             android:icon="@drawable/ic_ondemand_video_white_48dp"
@@ -13,35 +15,24 @@
             android:icon="@drawable/baseline_filter_white_48dp"
             android:title="动漫分类" />
     </group>
-    <item android:title="我的">
-        <menu>
-            <group android:checkableBehavior="single">
-                <item
-                    android:id="@+id/favorite"
-                    android:icon="@drawable/ic_loyalty_white_48dp"
-                    android:title="追番" />
-            </group>
-        </menu>
-    </item>
-    <item android:title="设置">
-        <menu>
-            <group android:checkableBehavior="single">
-                <item
-                    android:id="@+id/setting"
-                    android:icon="@drawable/ic_settings_white_48dp"
-                    android:title="自定义" />
-            </group>
-        </menu>
-    </item>
-    <item android:title="其他">
-        <menu>
-            <group android:checkableBehavior="single">
-            <item
-                android:id="@+id/about"
-                android:icon="@drawable/ic_bubble_chart_white_48dp"
-                android:title="关于" />
-            </group>
-        </menu>
-    </item>
-
+    <group
+        android:id="@+id/group2"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/favorite"
+            android:icon="@drawable/ic_loyalty_white_48dp"
+            android:title="追番" />
+    </group>
+    <group
+        android:id="@+id/group3"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/setting"
+            android:icon="@drawable/ic_settings_white_48dp"
+            android:title="自定义" />
+        <item
+            android:id="@+id/about"
+            android:icon="@drawable/ic_bubble_chart_white_48dp"
+            android:title="关于" />
+    </group>
 </menu>

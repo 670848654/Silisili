@@ -1,7 +1,5 @@
 package my.project.silisili.main.animelist;
 
-import android.util.Log;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -23,17 +21,17 @@ public class AnimeListModel implements AnimeListContract.Model{
 
     @Override
     public void getData(String url, int page, boolean isMain, AnimeListContract.LoadDataCallback callback) {
-        Log.e("page", page +"");
         if (page != 0) {
             //如果不是第一页
             if (url.contains("anime"))
                 url = url.contains(Silisili.DOMAIN) ? url + page : Silisili.DOMAIN + url + page;
-            else if (url.contains("riyu") || url.contains("guoyu") || url.contains("yingyu") || url.contains("yueyu"))
+            else if (url.contains("riyu") || url.contains("guoyu") || url.contains("yingyu") || url.contains("yueyu")) {
+                page += 1;
                 url = url.contains(Silisili.DOMAIN) ? url + "index_" + page + ".html" : Silisili.DOMAIN + url + "index_" + page + ".html";
+            }
             else if (url.contains("tags"))
                 url = url.contains(Silisili.DOMAIN) ? url + "&page=" + page: Silisili.DOMAIN + url + "&page=" + page;
         }
-        Log.e("url", url);
         new HttpGet(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -47,11 +45,9 @@ public class AnimeListModel implements AnimeListContract.Model{
                     Elements animeList = body.getElementsByClass("anime_list").select("dl");
                     if (animeList.size() > 0) {
                         if (isMain) {
-                            Elements pages = body.select("div.page");
-                            if (!pages.get(0).text().isEmpty()) {
-                                String[] pageArr = pages.get(0).select("a").text().split(" ");
-                                callback.pageCount(Integer.parseInt(pageArr[pageArr.length - 3]));
-                            }
+                            Elements pages = body.select("div.page > a");
+                            String[] hrefArr = pages.get(pages.size()-1).attr("href").split("/");
+                            callback.pageCount(Integer.parseInt(hrefArr[hrefArr.length-1].replaceAll("[^0-9]", "")));
                         }
 
                         List<AnimeDescHeaderBean> list = new ArrayList<>();

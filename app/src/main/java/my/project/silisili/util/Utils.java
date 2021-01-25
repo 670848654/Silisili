@@ -30,6 +30,7 @@ import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
@@ -614,5 +615,22 @@ public class Utils {
      */
     public static boolean loadX5() {
         return (boolean) SharedPreferencesUtils.getParam(getContext(), "loadX5", false);
+    }
+
+    /**
+     * 选择浏览器
+     *
+     * @param url
+     */
+    public static void openBrowser(Context context, String url) {
+        final Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
+            context.startActivity(Intent.createChooser(intent, getString(R.string.select_tools)));
+        } else {
+            Toast.makeText(context.getApplicationContext(), getString(R.string.tools_not_found), Toast.LENGTH_SHORT).show();
+        }
     }
 }

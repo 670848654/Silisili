@@ -21,6 +21,7 @@ import butterknife.BindView;
 import my.project.silisili.R;
 import my.project.silisili.adapter.FavoriteListAdapter;
 import my.project.silisili.bean.AnimeDescHeaderBean;
+import my.project.silisili.custom.CustomLoadMoreView;
 import my.project.silisili.database.DatabaseUtil;
 import my.project.silisili.main.base.BaseActivity;
 import my.project.silisili.main.desc.DescActivity;
@@ -39,15 +40,20 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
     private List<AnimeDescHeaderBean> favoriteList = new ArrayList<>();
     @BindView(R.id.show)
     CoordinatorLayout show;
+    private int limit = 100;
+    private int videosCount = 0;
+    private boolean isMain = true;
+    protected boolean isErr = true;
 
     @Override
     protected FavoritePresenter createPresenter() {
-        return new FavoritePresenter(this);
+        return new FavoritePresenter(favoriteList.size(), limit, this);
     }
 
     @Override
     protected void loadData() {
-        mPresenter.loadData(true);
+        videosCount = DatabaseUtil.queryFavoriteCount();
+        mPresenter.loadData(isMain);
     }
 
     @Override
@@ -111,8 +117,28 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
             popupMenu.show();
             return true;
         });
+        adapter.setLoadMoreView(new CustomLoadMoreView());
+        adapter.setOnLoadMoreListener(() -> mRecyclerView.postDelayed(() -> {
+            if (favoriteList.size() >= videosCount) {
+                adapter.loadMoreEnd();
+            } else {
+                if (isErr) {
+                    isMain = false;
+                    mPresenter = createPresenter();
+                    loadData();
+                } else {
+                    isErr = true;
+                    adapter.loadMoreFail();
+                }
+            }
+        }, 500), mRecyclerView);
         if (Utils.checkHasNavigationBar(this)) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this));
         mRecyclerView.setAdapter(adapter);
+    }
+
+    public void setLoadState(boolean loadState) {
+        isErr = loadState;
+        adapter.loadMoreComplete();
     }
 
     /**
@@ -132,20 +158,25 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == 200 && requestCode == 3000) {
-            mPresenter.loadData(true);
+            isMain = true;
+            favoriteList.clear();
+            mPresenter = createPresenter();
+            loadData();
         }
     }
 
     @Override
     public void showLoadingView() {
-        favoriteList.clear();
         adapter.setNewData(favoriteList);
     }
 
     @Override
     public void showLoadErrorView(String msg) {
-        errorTitle.setText(msg);
-        adapter.setEmptyView(errorView);
+        setLoadState(false);
+        if (isMain) {
+            errorTitle.setText(msg);
+            adapter.setEmptyView(errorView);
+        }
     }
 
     @Override
@@ -155,7 +186,11 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
 
     @Override
     public void showSuccessView(List<AnimeDescHeaderBean> list) {
-        favoriteList = list;
-        adapter.setNewData(favoriteList);
+        setLoadState(true);
+        if (isMain) {
+            favoriteList = list;
+            adapter.setNewData(favoriteList);
+        } else
+            adapter.addData(list);
     }
 }

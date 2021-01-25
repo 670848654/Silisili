@@ -8,7 +8,7 @@ public class TagBean implements MultiItemEntity {
     private String title;
     private String url;
     private String desc;
-
+    private boolean selected;
 
     public TagBean(String title, String url, String desc) {
         this.title = title;
@@ -38,6 +38,14 @@ public class TagBean implements MultiItemEntity {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 
     @Override

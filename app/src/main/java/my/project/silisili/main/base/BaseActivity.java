@@ -146,6 +146,10 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     }
 
+    public boolean gtSdk26() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
+    }
+
     private String getRunningActivityName() {
         String contextString = this.toString();
         return contextString.substring(contextString.lastIndexOf(".") + 1,

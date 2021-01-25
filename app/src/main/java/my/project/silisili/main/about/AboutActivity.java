@@ -166,6 +166,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("1.0-beta11", "2021年1月25日", "域名变更为http://www.silisili.in\n修复动漫分类分页Bug\n动漫分类界面改动\n内置播放器快进、后退参数可设置（5s，10s，15s，30s），播放器界面点击“设置”图标，在弹窗界面中配置"));
         logsList.add(new LogBean("1.0-beta10", "2020年8月19日", "修复国语分类翻页Bug\n修复番剧详情加载失败闪退Bug"));
         logsList.add(new LogBean("1.0-beta9", "2020年8月10日", "修复番剧列表分页Bug\n番剧详情界面布局修改"));
         logsList.add(new LogBean("1.0-beta8", "2020年7月23日", "修复番剧详情显示不正常的问题"));
@@ -211,7 +212,13 @@ public class AboutActivity extends BaseActivity {
                            Utils.findNewVersion(AboutActivity.this,
                                    newVersion,
                                    body,
-                                   (dialog, which) -> download(),
+                                   (dialog, which) -> {
+//                                           download()
+                                           dialog.dismiss();
+                                            Utils.putTextIntoClip(downloadUrl);
+                                            application.showSuccessToastMsg(Utils.getString(R.string.url_copied));
+                                            Utils.openBrowser(AboutActivity.this, downloadUrl);
+                                   },
                                    (dialog, which) -> dialog.dismiss()
                                    );
                         });
