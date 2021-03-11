@@ -30,7 +30,7 @@ public class TagAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, BaseV
             case TYPE_LEVEL_0:
                 final TagHeaderBean homeHeaderBean = (TagHeaderBean) item;
                 helper.setText(R.id.header, homeHeaderBean.getTitle());
-//                helper.setText(R.id.header, homeHeaderBean.getTitle()).setImageResource(R.id.arrow, homeHeaderBean.isExpanded() ? R.drawable.ic_keyboard_arrow_down_white_48dp : R.drawable.baseline_keyboard_arrow_right_white_48dp);
+//                helper.setText(R.id.light_img, homeHeaderBean.getTitle()).setImageResource(R.id.arrow, homeHeaderBean.isExpanded() ? R.drawable.ic_keyboard_arrow_down_white_48dp : R.drawable.baseline_keyboard_arrow_right_white_48dp);
                 helper.itemView.setOnClickListener(v -> {
                     /*int pos = helper.getAdapterPosition();
                     if (homeHeaderBean.isExpanded()) {

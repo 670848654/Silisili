@@ -23,12 +23,14 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -108,14 +110,31 @@ public class Utils {
 
     /**
      * 加载框
+     *
      * @return
      */
-    public static ProgressDialog getProDialog(Context context, @StringRes int id) {
-        ProgressDialog p = new ProgressDialog(context);
-        p.setMessage(getString(id));
-        p.setCancelable(false);
-        p.show();
-        return p;
+    public static AlertDialog getProDialog(Activity activity, @StringRes int id) {
+        AlertDialog alertDialog;
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.DialogStyle);
+        View view = LayoutInflater.from(activity).inflate(R.layout.dialog_proress, null);
+        RelativeLayout root = view.findViewById(R.id.root);
+        TextView msg = view.findViewById(R.id.msg);
+        root.setBackgroundColor(activity.getResources().getColor(R.color.window_bg));
+        msg.setTextColor(activity.getResources().getColor(R.color.text_color_primary));
+        msg.setText(getString(id));
+        builder.setCancelable(false);
+        alertDialog = builder.setView(view).create();
+        alertDialog.show();
+        return alertDialog;
+    }
+
+    /**
+     * 关闭对话框
+     * @param alertDialog
+     */
+    public static void cancelDialog(AlertDialog alertDialog) {
+        if (alertDialog != null)
+            alertDialog.dismiss();
     }
 
     /**
@@ -131,16 +150,6 @@ public class Utils {
         pd.setMax(100);
         pd.setMessage(getString(R.string.download));
         return pd;
-    }
-
-    /**
-     * 关闭加载框
-     *
-     * @param p
-     */
-    public static void cancelProDialog(ProgressDialog p) {
-        if (p != null)
-            p.dismiss();
     }
 
     /**
@@ -357,11 +366,16 @@ public class Utils {
                 >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
-    /**
+   /**
      * 设置默认图片
+     * @param context
      * @param url
+     * @param imageView
+     * @param setPalette
+     * @param cardView
+     * @param textView
      */
-    public static void setDefaultImage(Context context, String url, ImageView imageView){
+    public static void setDefaultImage(Context context, String url, ImageView imageView, boolean setPalette, CardView cardView, TextView textView) {
         DrawableCrossFadeFactory drawableCrossFadeFactory = new DrawableCrossFadeFactory.Builder(300).setCrossFadeEnabled(true).build();
         RequestOptions options = new RequestOptions()
                 .centerCrop()
@@ -373,47 +387,19 @@ public class Utils {
                 .transition(DrawableTransitionOptions.withCrossFade(drawableCrossFadeFactory))
                 .apply(options)
                 .into(imageView);
-    }
-
-    /**
-     * 设置圆形图片
-     * @param context
-     * @param url
-     * @param imageView
-     */
-    public static void setCircleImage(Context context, String url, CircleImageView imageView){
-        RequestOptions options = new RequestOptions()
-                .centerCrop()
-                .format(DecodeFormat.PREFER_RGB_565)
-                .dontAnimate()//防止设置placeholder导致第一次不显示网络图片,只显示默认图片的问题
-                .placeholder(R.drawable.loading)
-                .error(R.drawable.error);
-        Glide.with(context)
-                .load(url)
-                .apply(options)
-                .into(imageView);
-    }
-
-    /**
-     * 设置Palette
-     * @param context
-     * @param url
-     * @param cardView
-     * @param textView
-     */
-    public static void setCardBg(Context context, String url, CardView cardView, TextView textView) {
-        Glide.with(context).asBitmap().load(url).into(new SimpleTarget<Bitmap>() {
-            @Override
-            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                Palette.from(resource).generate(palette -> {
-                    Palette.Swatch swatch = palette.getDarkVibrantSwatch();
-                    if (swatch != null) {
-                        cardView.setCardBackgroundColor(swatch.getRgb());
-                        textView.setTextColor(swatch.getBodyTextColor());
-                    }
-                });
-            }
-        });
+        if (setPalette) // 设置Palette
+            Glide.with(context).asBitmap().load(url).into(new SimpleTarget<Bitmap>() {
+                @Override
+                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                    Palette.from(resource).generate(palette -> {
+                        Palette.Swatch swatch = palette.getDarkVibrantSwatch();
+                        if (swatch != null) {
+                            cardView.setCardBackgroundColor(swatch.getRgb());
+                            textView.setTextColor(swatch.getBodyTextColor());
+                        }
+                    });
+                }
+            });
     }
 
     public static void setCardDefaultBg(Context context, CardView cardView, TextView textView) {
@@ -453,52 +439,13 @@ public class Utils {
     }
 
     /**
-     * 安装应用
-     * @param activity
+     * 发现新版本弹窗
+     * @param context
+     * @param version
+     * @param body
+     * @param posListener
+     * @param negListener
      */
-    public static void startInstall(Activity activity) {
-        //权限不存在，申请权限，并跳到当前包
-        if(!isGranted(activity,Manifest.permission.REQUEST_INSTALL_PACKAGES)){
-            Uri packageURI = Uri.parse("package:" + activity.getPackageName());
-            Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI);
-            activity.startActivityForResult(intent, 10001);
-        }else {
-            install(activity);
-        }
-    }
-
-    /**
-     * 安装应用
-     * @param activity
-     */
-    private static void install(Activity activity){
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        //android 7.0权限问题
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            Uri contentUri = FileProvider.getUriForFile(activity, BuildConfig.APPLICATION_ID + ".fileProvider", new File(Environment.getExternalStorageDirectory(), "base.apk"));
-            intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
-        } else {
-            intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "base.apk")), "application/vnd.android.package-archive");
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        }
-        activity.startActivity(intent);
-    }
-
-    /**
-     * 判断是否为Android O+
-     * @param activity
-     * @param permission
-     * @return
-     */
-    private static boolean isGranted(Activity activity,String permission) {
-        // 8.0 权限 安装apk 权限
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            return activity.getPackageManager().canRequestPackageInstalls();
-        }
-        return true;
-    }
-
     public static void findNewVersion(Context context,
                                        String version,
                                        String body,
@@ -507,9 +454,9 @@ public class Utils {
         AlertDialog alertDialog;
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context);
         builder.setMessage(body);
-        builder.setTitle(getString(R.string.has_new_version) + version);
+        builder.setTitle(getString(R.string.find_new_version) + version);
         builder.setPositiveButton(getString(R.string.update_now), posListener);
-        builder.setNegativeButton(getString(R.string.update_latter), negListener);
+        builder.setNegativeButton(getString(R.string.update_after), negListener);
         builder.setCancelable(false);
         alertDialog = builder.create();
         alertDialog.show();

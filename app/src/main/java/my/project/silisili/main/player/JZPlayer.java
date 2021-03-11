@@ -1,15 +1,20 @@
 package my.project.silisili.main.player;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import cn.jzvd.JZDataSource;
 import cn.jzvd.JzvdStd;
 import my.project.silisili.R;
+import my.project.silisili.cling.ui.DLNAActivity;
 import my.project.silisili.util.SharedPreferencesUtils;
 
 public class JZPlayer extends JzvdStd {
@@ -18,7 +23,9 @@ public class JZPlayer extends JzvdStd {
     private TouchListener touchListener;
     private ImageView ibLock;
     private boolean locked = false;
-    public ImageView fastForward, quickRetreat, config;
+    public ImageView fastForward, quickRetreat, config, airplay;
+    public TextView tvSpeed, snifferBtn;
+    public int currentSpeedIndex = 1;
 
     public JZPlayer(Context context) { super(context); }
 
@@ -48,6 +55,11 @@ public class JZPlayer extends JzvdStd {
         fastForward = findViewById(R.id.fast_forward);
         fastForward.setOnClickListener(this);
         config = findViewById(R.id.config);
+        tvSpeed = findViewById(R.id.tvSpeed);
+        tvSpeed.setOnClickListener(this);
+        airplay = findViewById(R.id.airplay);
+        airplay.setOnClickListener(this);
+        snifferBtn = findViewById(R.id.sniffer_btn);
     }
 
     @Override
@@ -96,7 +108,46 @@ public class JZPlayer extends JzvdStd {
                     mediaInterface.seekTo(0);
                 }
                 break;
+            case R.id.tvSpeed:
+                if (currentSpeedIndex == 5) currentSpeedIndex = 0;
+                else currentSpeedIndex += 1;
+                mediaInterface.setSpeed(getSpeedFromIndex(currentSpeedIndex));
+                tvSpeed.setText("倍数X" + getSpeedFromIndex(currentSpeedIndex));
+                break;
+            case R.id.airplay:
+                Bundle bundle = new Bundle();
+                bundle.putString("playUrl", jzDataSource.getCurrentUrl().toString());
+                bundle.putLong("duration", getDrawingTime());
+                Log.e("duration", getDrawingTime() + "");
+                Log.e("playUrl", jzDataSource.getCurrentUrl().toString());
+                context.startActivity(new Intent(context, DLNAActivity.class).putExtras(bundle));
+                break;
         }
+    }
+
+    private float getSpeedFromIndex(int index) {
+        float ret = 0f;
+        switch (index) {
+            case 0:
+                ret = 0.5f;
+                break;
+            case 1:
+                ret = 1.0f;
+                break;
+            case 2:
+                ret = 1.5f;
+                break;
+            case 3:
+                ret = 2.0f;
+                break;
+            case 4:
+                ret = 2.5f;
+                break;
+            case 5:
+                ret = 3.0f;
+                break;
+        }
+        return ret;
     }
 
     //这里是播放的时候点击屏幕出现的UI
@@ -108,6 +159,7 @@ public class JZPlayer extends JzvdStd {
             fastForward.setVisibility(VISIBLE);
             quickRetreat.setVisibility(VISIBLE);
             config.setVisibility(VISIBLE);
+            airplay.setVisibility(VISIBLE);
         }
         if (screen == SCREEN_FULLSCREEN)
             ibLock.setVisibility(ibLock.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
@@ -133,6 +185,7 @@ public class JZPlayer extends JzvdStd {
         fastForward.setVisibility(INVISIBLE);
         quickRetreat.setVisibility(INVISIBLE);
         config.setVisibility(INVISIBLE);
+        airplay.setVisibility(INVISIBLE);
     }
 
     // 点击暂停按钮执行的回调
@@ -143,6 +196,7 @@ public class JZPlayer extends JzvdStd {
         fastForward.setVisibility(INVISIBLE);
         quickRetreat.setVisibility(INVISIBLE);
         config.setVisibility(INVISIBLE);
+        airplay.setVisibility(VISIBLE);
     }
 
 
@@ -154,6 +208,7 @@ public class JZPlayer extends JzvdStd {
         fastForward.setVisibility(INVISIBLE);
         quickRetreat.setVisibility(INVISIBLE);
         config.setVisibility(INVISIBLE);
+        airplay.setVisibility(VISIBLE);
     }
 
     //这里是出错的UI
@@ -164,6 +219,7 @@ public class JZPlayer extends JzvdStd {
         fastForward.setVisibility(INVISIBLE);
         quickRetreat.setVisibility(INVISIBLE);
         config.setVisibility(INVISIBLE);
+        airplay.setVisibility(INVISIBLE);
     }
 
     // 点击屏幕会出现所有控件，一定时间后消失的回调
@@ -176,6 +232,7 @@ public class JZPlayer extends JzvdStd {
             fastForward.setVisibility(INVISIBLE);
             quickRetreat.setVisibility(INVISIBLE);
             config.setVisibility(INVISIBLE);
+            airplay.setVisibility(state == STATE_ERROR ? INVISIBLE : VISIBLE);
         });
     }
 
@@ -183,6 +240,7 @@ public class JZPlayer extends JzvdStd {
     public void setScreenFullscreen() {
         super.setScreenFullscreen();
         fullscreenButton.setImageResource(R.drawable.baseline_view_selections_white_48dp);
+        tvSpeed.setText("倍数X" + getSpeedFromIndex(currentSpeedIndex));
     }
 
     public interface  CompleteListener{

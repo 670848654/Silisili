@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import org.json.JSONArray;
@@ -18,8 +21,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -38,7 +39,7 @@ public class WeekFragment extends LazyFragment {
     RecyclerView recyclerView;
     @BindView(R.id.loading)
     ProgressBar loading;
-    private FragmentAdapter adapter;
+    protected FragmentAdapter adapter;
     private List<HomeWekBean> list = new ArrayList<>();
     private Silisili application;
     private View view;

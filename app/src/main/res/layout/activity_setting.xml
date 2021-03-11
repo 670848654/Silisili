@@ -67,6 +67,7 @@
 
                 <RelativeLayout
                     android:id="@+id/set_player"
+                    android:visibility="gone"
                     android:background="?android:attr/selectableItemBackground"
                     android:layout_width="match_parent"
                     android:layout_height="65dp">

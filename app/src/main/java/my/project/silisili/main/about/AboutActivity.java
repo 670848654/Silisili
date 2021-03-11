@@ -1,6 +1,5 @@
 package my.project.silisili.main.about;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Environment;
@@ -14,6 +13,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.r0adkll.slidr.Slidr;
 
 import org.json.JSONException;
@@ -23,11 +28,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import my.project.silisili.R;
@@ -37,7 +37,6 @@ import my.project.silisili.application.Silisili;
 import my.project.silisili.bean.LogBean;
 import my.project.silisili.main.base.BaseActivity;
 import my.project.silisili.main.base.Presenter;
-import my.project.silisili.net.DownloadUtil;
 import my.project.silisili.net.HttpGet;
 import my.project.silisili.util.SharedPreferencesUtils;
 import my.project.silisili.util.SwipeBackLayoutUtil;
@@ -53,7 +52,7 @@ public class AboutActivity extends BaseActivity {
     TextView cache;
     @BindView(R.id.version)
     TextView version;
-    private ProgressDialog p;
+    private AlertDialog alertDialog;
     private  String downloadUrl;
     private Call downCall;
     @BindView(R.id.footer)
@@ -166,6 +165,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("1.0-beta12", "2021年3月11日", "修复ExoPlayer不支持（http -> https | https -> http）重定向导致部分番剧无法正常播放的问题\n修复动漫分类界面浮动按钮在有导航栏的设备上被遮挡的问题\n内置播放器新增倍数播放（0.5X - 3X）\n新增视频投屏功能"));
         logsList.add(new LogBean("1.0-beta11", "2021年1月25日", "域名变更为http://www.silisili.in\n修复动漫分类分页Bug\n动漫分类界面改动\n内置播放器快进、后退参数可设置（5s，10s，15s，30s），播放器界面点击“设置”图标，在弹窗界面中配置"));
         logsList.add(new LogBean("1.0-beta10", "2020年8月19日", "修复国语分类翻页Bug\n修复番剧详情加载失败闪退Bug"));
         logsList.add(new LogBean("1.0-beta9", "2020年8月10日", "修复番剧列表分页Bug\n番剧详情界面布局修改"));
@@ -181,13 +181,13 @@ public class AboutActivity extends BaseActivity {
     }
 
     public void checkUpdate() {
-        p = Utils.getProDialog(this, R.string.check_update_text);
+        alertDialog = Utils.getProDialog(this, R.string.check_update_text);
         new Handler().postDelayed(() -> new HttpGet(Api.CHECK_UPDATE, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(() -> {
-                    Utils.cancelProDialog(p);
-                    application.showSnackbarMsgAction(show, Utils.getString(R.string.network_error), Utils.getString(R.string.try_again), v -> checkUpdate());
+                    Utils.cancelDialog(alertDialog);
+                    application.showSnackbarMsgAction(show, Utils.getString(R.string.ck_network_error), Utils.getString(R.string.try_again), v -> checkUpdate());
                 });
             }
 
@@ -201,19 +201,18 @@ public class AboutActivity extends BaseActivity {
                     String newVersion = obj.getString("tag_name");
                     if (newVersion.equals(Utils.getASVersionName()))
                         runOnUiThread(() -> {
-                            Utils.cancelProDialog(p);
+                            Utils.cancelDialog(alertDialog);
                             application.showSnackbarMsg(show, Utils.getString(R.string.no_new_version));
                         });
                     else {
                         downloadUrl = obj.getJSONArray("assets").getJSONObject(0).getString("browser_download_url");
                         String body = obj.getString("body");
                         runOnUiThread(() -> {
-                            Utils.cancelProDialog(p);
+                            Utils.cancelDialog(alertDialog);
                            Utils.findNewVersion(AboutActivity.this,
                                    newVersion,
                                    body,
                                    (dialog, which) -> {
-//                                           download()
                                            dialog.dismiss();
                                             Utils.putTextIntoClip(downloadUrl);
                                             application.showSuccessToastMsg(Utils.getString(R.string.url_copied));
@@ -228,51 +227,5 @@ public class AboutActivity extends BaseActivity {
                 }
             }
         }), 1000);
-    }
-
-    public void download() {
-        p = Utils.showProgressDialog(AboutActivity.this);
-        p.setButton(ProgressDialog.BUTTON_NEGATIVE, Utils.getString(R.string.page_negative), (dialog1, which1) -> {
-            if (null != downCall)
-                downCall.cancel();
-            dialog1.dismiss();
-        });
-        p.show();
-        downNewVersion(downloadUrl);
-    }
-
-    /**
-     * 下载apk
-     * @param url 下载地址
-     */
-    private void downNewVersion(String url) {
-        downCall = DownloadUtil.get().downloadApk(url, new DownloadUtil.OnDownloadListener() {
-            @Override
-            public void onDownloadSuccess(final String fileName) {
-                runOnUiThread(() -> {
-                    Utils.cancelProDialog(p);
-                    Utils.startInstall(AboutActivity.this);
-                });
-            }
-            @Override
-            public void onDownloading(final int progress) {
-                runOnUiThread(() -> p.setProgress(progress));
-            }
-            @Override
-            public void onDownloadFailed() {
-                runOnUiThread(() -> {
-                    Utils.cancelProDialog(p);
-                    application.showSnackbarMsgAction(show, Utils.getString(R.string.download_error), Utils.getString(R.string.try_again), v -> download());
-                });
-            }
-        });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 10001) {
-            Utils.startInstall(AboutActivity.this);
-        }
     }
 }

@@ -50,7 +50,7 @@
     <string name="join_ok">(´・ω・`) 自己追的番就要好好看完哦！</string>
     <string name="join_error">(﹁"﹁) 哼！竟然真的抛弃了人家。</string>
     <string name="parsing_error">解析出错\n代码无法解析该界面信息</string>
-    <string name="should_be_used_web">常规解析失败,尝试嗅探获取播放地址&#8230;</string>
+    <string name="should_be_used_web">尝试嗅探获取播放地址&#8230;</string>
     <string name="open_web_view">解析视频地址失败，尝试使用WebView打开</string>
     <string name="select_video_source">选择播放源</string>
     <!--<string name="no_playlist_error">根据国家相关部门规定\n本动画不准上架</string>-->
@@ -76,7 +76,7 @@
     <string name="page_positive_edit">修改</string>
     <string name="page_negative">取消</string>
     <string name="page_def">恢复默认</string>
-    <string name="domain_title">输入嘶哩嘶哩域名(电脑版)</string>
+    <string name="domain_title">输入嘶哩嘶哩域名（PC端）</string>
     <string name="set_domain_ok">域名更改成功</string>
     <string name="set_domain_error1">参数不能为空</string>
     <string name="set_domain_error2">参数格式错误</string>
@@ -87,8 +87,8 @@
     <string name="domain">域名设置 (备用)</string>
     <string name="domain_url">http://www.silisili.in</string>
     <string name="search_title">检索方式</string>
-    <string name="light">亮色主题</string>
-    <string name="dark">暗色主题</string>
+    <string name="set_light_theme">切至亮色主题</string>
+    <string name="set_dark_theme">切至暗色主题</string>
     <!-- webViewDialog 文本 -->
     <string name="analysis_line">解析线路</string>
     <string name="anthology">选集</string>
@@ -114,16 +114,19 @@
     <string name="update_log">更新日志</string>
     <string name="check_update">检测更新</string>
     <string name="check_update_text">检测更新中&#8230;</string>
-    <string name="has_new_version">发现新版本</string>
-    <string name="update_now">马上更新</string>
-    <string name="update_latter">暂不更新</string>
+    <string name="download">下载中,请等待</string>
+    <string name="ck_network_error">连接Github超时，请重试</string>
+    <string name="ck_network_error_start">连接Github超时，检测更新失败</string>
+    <string name="ck_error_start">Github返回出错，检测更新失败</string>
     <string name="try_again">重试</string>
     <string name="no_new_version">已是最新版本，无需更新</string>
-    <string name="network_error">连接服务器超时，检测更新失败</string>
-    <string name="download">下载中,请等待</string>
+    <string name="cancel">取消</string>
     <string name="download_error">下载失败</string>
+    <string name="find_new_version">发现新版本</string>
+    <string name="update_now">现在更新</string>
+    <string name="update_after">暂不更新</string>
     <string name="final_compile">最后编译日期</string>
-    <string name="final_compile_time">2021年1月25日</string>
+    <string name="final_compile_time">2021年3月11日</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SilisiliAnime/\n卸载后自行删除此目录</string>
     <string name="github">Github</string>
@@ -146,6 +149,18 @@
     <string name="url_copied">下载地址已复制到剪切板</string>
     <string name="select_tools">请选择下载工具</string>
     <string name="tools_not_found">没有找到匹配的程序</string>
+    <string name="click_to_sniffer">尝试网页嗅探解析</string>
+
+    <string name="device_title">设备列表</string>
+    <string name="notice">请选择连接设备，连接设备后才可播放</string>
+    <string name="selectedText">已选中: %s</string>
+    <string name="progress">进度</string>
+    <string name="volume">音量</string>
+    <string name="mute">静音</string>
+    <string name="play">播放</string>
+    <string name="pause">暂停</string>
+    <string name="stop">停止</string>
+    <string name="exit">退出</string>
 
     <string-array name="speed_item">
         <item>5s</item>

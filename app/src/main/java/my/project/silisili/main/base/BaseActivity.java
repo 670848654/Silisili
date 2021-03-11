@@ -8,11 +8,13 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+
+import java.util.List;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import my.project.silisili.R;
@@ -30,10 +32,16 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
     protected P mPresenter;
     protected boolean mActivityFinish = false;
     private Unbinder mUnBinder;
+    protected boolean isDarkTheme;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isDarkTheme = (Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false);
+        if (isDarkTheme)
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        else
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         if (!getRunningActivityName().equals("StartActivity") && !getRunningActivityName().equals("HomeActivity")) overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         initBeforeView();
         setContentView(setLayoutRes());
@@ -164,10 +172,11 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
                 !getRunningActivityName().equals("DefaultX5WebActivity") &&
                 !getRunningActivityName().equals("X5WebActivity") &&
                 !getRunningActivityName().equals("DefaultNormalWebActivity") &&
-                !getRunningActivityName().equals("NormalWebActivity")) {
-            if (gtSdk23()) {
+                !getRunningActivityName().equals("NormalWebActivity") &&
+                !getRunningActivityName().equals("DLNAActivity")) {
+        if (gtSdk23()) {
                 StatusBarUtil.setColorForSwipeBack(this, getColor(R.color.colorPrimary), 0);
-                if (!(Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false))
+                if (! isDarkTheme)
                     this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             } else
                 StatusBarUtil.setColorForSwipeBack(this, getResources().getColor(R.color.colorPrimaryDark), 0);

@@ -1,24 +1,23 @@
 package my.project.silisili.main.start;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Handler;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
 import org.json.JSONObject;
 
 import java.io.IOException;
 
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import butterknife.BindView;
 import my.project.silisili.R;
 import my.project.silisili.api.Api;
 import my.project.silisili.main.base.BaseActivity;
 import my.project.silisili.main.base.Presenter;
 import my.project.silisili.main.home.HomeActivity;
-import my.project.silisili.net.DownloadUtil;
 import my.project.silisili.net.HttpGet;
 import my.project.silisili.util.SharedPreferencesUtils;
 import my.project.silisili.util.StatusBarUtil;
@@ -32,9 +31,7 @@ public class StartActivity extends BaseActivity {
     LinearLayout linearLayout;
     @BindView(R.id.view_need_offset)
     CoordinatorLayout coordinatorLayout;
-    private ProgressDialog p;
     private String downUrl;
-    private Call downCall;
 
     @Override
     protected Presenter createPresenter() {
@@ -72,7 +69,7 @@ public class StartActivity extends BaseActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(() -> {
-                    application.showErrorToastMsg(Utils.getString(R.string.network_error));
+                    application.showErrorToastMsg(Utils.getString(R.string.ck_network_error));
                     openMain();
                 });
             }
@@ -93,14 +90,6 @@ public class StartActivity extends BaseActivity {
                                 newVersion,
                                 body,
                                 (dialog, which) -> {
-                                    /*p = Utils.showProgressDialog(StartActivity.this);
-                                    p.setButton(ProgressDialog.BUTTON_NEGATIVE, Utils.getString(R.string.page_negative), (dialog1, which1) -> {
-                                        if (null != downCall)
-                                            downCall.cancel();
-                                        dialog1.dismiss();
-                                    });
-                                    p.show();
-                                    downNewVersion(downUrl);*/
                                     dialog.dismiss();
                                     Utils.putTextIntoClip(downUrl);
                                     application.showSuccessToastMsg(Utils.getString(R.string.url_copied));
@@ -115,39 +104,10 @@ public class StartActivity extends BaseActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                     runOnUiThread(() -> {
-                        application.showErrorToastMsg(Utils.getString(R.string.network_error));
+                        application.showErrorToastMsg(Utils.getString(R.string.ck_error_start));
                         openMain();
                     });
                 }
-            }
-        });
-    }
-
-    /**
-     * 下载apk
-     * @param url 下载地址
-     */
-    private void downNewVersion(String url) {
-        downCall = DownloadUtil.get().downloadApk(url, new DownloadUtil.OnDownloadListener() {
-            @Override
-            public void onDownloadSuccess(final String fileName) {
-                runOnUiThread(() -> {
-                    Utils.cancelProDialog(p);
-                    Utils.startInstall(StartActivity.this);
-                    StartActivity.this.finish();
-                });
-            }
-            @Override
-            public void onDownloading(final int progress) {
-                runOnUiThread(() -> p.setProgress(progress));
-            }
-            @Override
-            public void onDownloadFailed() {
-                runOnUiThread(() -> {
-                    Utils.cancelProDialog(p);
-                    application.showErrorToastMsg(Utils.getString(R.string.download_error));
-                    openMain();
-                });
             }
         });
     }

@@ -1,7 +1,6 @@
 package my.project.silisili.main.player;
 
 import android.app.PictureInPictureParams;
-import android.app.ProgressDialog;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -13,13 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fanchen.sniffing.SniffingUICallback;
-import com.fanchen.sniffing.SniffingVideo;
-import com.fanchen.sniffing.web.SniffingUtil;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -27,6 +19,15 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.fanchen.sniffing.DefaultFilter;
+import com.fanchen.sniffing.SniffingUICallback;
+import com.fanchen.sniffing.SniffingVideo;
+import com.fanchen.sniffing.web.SniffingUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.jzvd.Jzvd;
@@ -52,7 +53,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     RecyclerView recyclerView;
     private List<AnimeDescDetailsBean> list = new ArrayList<>();
     private AnimeDescDramaAdapter dramaAdapter;
-    private ProgressDialog p;
+    private AlertDialog alertDialog;
     private String animeTitle;
     @BindView(R.id.nav_view)
     LinearLayout linearLayout;
@@ -89,7 +90,6 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     @Override
     protected void init() {
         Silisili.addDestoryActivity(this, "player");
-        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         hideGap();
         Bundle bundle = getIntent().getExtras();
         init(bundle);
@@ -116,6 +116,9 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         list = (List<AnimeDescDetailsBean>) bundle.getSerializable("list");
         //禁止冒泡
         linearLayout.setOnClickListener(view -> {
+            return;
+        });
+        navConfigView.setOnClickListener(view -> {
             return;
         });
         linearLayout.getBackground().mutate().setAlpha(150);
@@ -152,11 +155,12 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         });
         player.setListener(this, this, this);
         player.backButton.setOnClickListener(v -> finish());
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            picConfig.setVisibility(View.GONE);
-        } else {
-            picConfig.setVisibility(View.VISIBLE);
-        }
+        // 加载视频失败，嗅探视频
+        player.snifferBtn.setOnClickListener(v -> snifferPlayUrl(url));
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) picConfig.setVisibility(View.GONE);
+        else picConfig.setVisibility(View.VISIBLE);
+        if (gtSdk23()) player.tvSpeed.setVisibility(View.VISIBLE);
+        else player.tvSpeed.setVisibility(View.GONE);
         player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
         player.fullscreenButton.setOnClickListener(view -> {
             if (!Utils.isFastClick()) return;
@@ -188,7 +192,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
             drawerLayout.closeDrawer(GravityCompat.END);
             AnimeDescDetailsBean bean = (AnimeDescDetailsBean) adapter.getItem(position);
             player.onPrepared();
-            p = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
+            alertDialog = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
             Button v = (Button) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
             v.setBackgroundResource(R.drawable.button_selected);
             v.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
@@ -207,24 +211,32 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     private void playAnime(String animeUrl) {
         cancelDialog();
         url = animeUrl;
-        if (url.contains(".mp4") || url.contains(".m3u8")) {
-            switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
-                case 0:
-                    //调用播放器
-                    Jzvd.releaseAllVideos();
-                    player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
-                    player.startVideo();
-                    break;
-                case 1:
-                    Jzvd.releaseAllVideos();
-                    Utils.selectVideoPlayer(PlayerActivity.this, url);
-                    break;
-            }
-        }else {
-            p = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
-            application.showToastMsg(Utils.getString(R.string.should_be_used_web));
-            SniffingUtil.get().activity(this).referer(animeUrl).callback(this).url(animeUrl).start();
-        }
+        /*switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
+            case 0:
+                //调用播放器
+                Jzvd.releaseAllVideos();
+                player.currentSpeedIndex = 1;
+                player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
+                player.startVideo();
+                break;
+            case 1:
+                Jzvd.releaseAllVideos();
+                Utils.selectVideoPlayer(PlayerActivity.this, url);
+                break;
+        }*/
+        Jzvd.releaseAllVideos();
+        player.currentSpeedIndex = 1;
+        player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
+        player.startVideo();
+    }
+
+    /**
+     * 嗅探视频真实连接
+     * @param animeUrl
+     */
+    private void snifferPlayUrl(String animeUrl) {
+        alertDialog = Utils.getProDialog(PlayerActivity.this, R.string.should_be_used_web);
+        SniffingUtil.get().activity(this).referer(animeUrl).callback(this).url(animeUrl).start();
     }
 
     private void initUserConfig() {
@@ -361,7 +373,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
 
     @Override
     public void cancelDialog() {
-        Utils.cancelProDialog(p);
+        Utils.cancelDialog(alertDialog);
     }
 
     @Override
@@ -375,8 +387,13 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     @Override
     public void getIframeUrl(String iframeUrl) {
         runOnUiThread(() -> {
-            application.showToastMsg(Utils.getString(R.string.should_be_used_web));
-            SniffingUtil.get().activity(this).referer(iframeUrl).callback(this).url(iframeUrl).start();
+//            application.showToastMsg(Utils.getString(R.string.should_be_used_web));
+//            SniffingUtil.get().activity(this).referer(iframeUrl).callback(this).url(iframeUrl).start();
+            url = iframeUrl;
+            Jzvd.releaseAllVideos();
+            player.currentSpeedIndex = 1;
+            player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
+            player.startVideo();
         });
     }
 
