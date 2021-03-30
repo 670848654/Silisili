@@ -1,6 +1,5 @@
 package my.project.silisili.util;
 
-import android.Manifest;
 import android.animation.Keyframe;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
@@ -16,9 +15,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
-import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -32,21 +29,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DecodeFormat;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
-import com.bumptech.glide.request.transition.Transition;
-import com.r0adkll.slidr.model.SlidrConfig;
-import com.r0adkll.slidr.model.SlidrPosition;
-
-import java.io.File;
-import java.util.Calendar;
-import java.util.Date;
 
 import androidx.annotation.ArrayRes;
 import androidx.annotation.NonNull;
@@ -55,12 +37,28 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.FileProvider;
 import androidx.palette.graphics.Palette;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
+import com.bumptech.glide.request.transition.Transition;
+import com.fanchen.sniffing.SniffingVideo;
+import com.r0adkll.slidr.model.SlidrConfig;
+import com.r0adkll.slidr.model.SlidrPosition;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 import my.project.silisili.BuildConfig;
 import my.project.silisili.R;
 import my.project.silisili.application.Silisili;
-import my.project.silisili.custom.CircleImageView;
 
 public class Utils {
     private static Context context;
@@ -216,7 +214,7 @@ public class Utils {
      */
     public static void showX5Info(Context context) {
         AlertDialog alertDialog;
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
         builder.setPositiveButton(getString(R.string.x5_info_positive), null);
         builder.setMessage(getString(R.string.x5_info));
         builder.setTitle(getString(R.string.x5_info_title));
@@ -452,7 +450,7 @@ public class Utils {
                                        DialogInterface.OnClickListener posListener,
                                        DialogInterface.OnClickListener negListener) {
         AlertDialog alertDialog;
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
         builder.setMessage(body);
         builder.setTitle(getString(R.string.find_new_version) + version);
         builder.setPositiveButton(getString(R.string.update_now), posListener);
@@ -565,19 +563,16 @@ public class Utils {
     }
 
     /**
-     * 选择浏览器
-     *
-     * @param url
+     * 嗅探视频地址集合
+     * @param list
+     * @return
      */
-    public static void openBrowser(Context context, String url) {
-        final Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(url));
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (intent.resolveActivity(context.getPackageManager()) != null) {
-            context.startActivity(Intent.createChooser(intent, getString(R.string.select_tools)));
-        } else {
-            Toast.makeText(context.getApplicationContext(), getString(R.string.tools_not_found), Toast.LENGTH_SHORT).show();
+    public static List ridRepeat(List<SniffingVideo> list) {
+        List<String> urls = new ArrayList();
+        for (SniffingVideo sniffingVideo : list) {
+            if (!urls.contains(sniffingVideo.getUrl()) && !sniffingVideo.getUrl().startsWith("mp4"))
+                urls.add(sniffingVideo.getUrl());
         }
+        return urls;
     }
 }

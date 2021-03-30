@@ -12,15 +12,15 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:orientation="vertical">
-       <!-- <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/srl_refresh"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        <ListView
-            android:id="@+id/lv_devices"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
+        <!-- <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+             android:id="@+id/srl_refresh"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+         <ListView
+             android:id="@+id/lv_devices"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"/>
+         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
         <RelativeLayout
             android:layout_margin="8dp"
             android:layout_width="wrap_content"
@@ -54,167 +54,183 @@
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_margin="8dp"
+        android:layout_margin="16dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_selected"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textColor="@color/text_color_primary"
-        android:text="@string/notice"/>
-
-<!--    <Switch
-        android:id="@+id/sw_mute"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/mute"
-        android:textColor="@color/text_color_primary"/>-->
-
-    <LinearLayout
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:gravity="center_vertical">
-
         <TextView
+            android:id="@+id/tv_selected"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/progress"
-            android:textColor="@color/text_color_primary"/>
+            android:textSize="16sp"
+            android:textColor="@color/text_color_primary"
+            android:text="@string/notice"/>
 
-        <SeekBar
-            android:id="@+id/seekbar_progress"
-            style="?android:attr/progressBarStyleHorizontal"
+        <!--    <Switch
+                android:id="@+id/sw_mute"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mute"
+                android:textColor="@color/text_color_primary"/>-->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+            android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_marginTop="8dp"
-        android:gravity="center_vertical">
+            <LinearLayout
+                android:id="@+id/time"
+                android:layout_width="match_parent"
+                android:layout_marginTop="8dp"
+                android:layout_height="20dp"
+                android:gravity="center_vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/volume"
-            android:textColor="@color/text_color_primary"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/progress"
+                    android:textColor="@color/text_color_primary"/>
 
-        <SeekBar
-            android:id="@+id/seekbar_volume"
-            style="?android:attr/progressBarStyleHorizontal"
+                <SeekBar
+                    android:id="@+id/seekbar_progress"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_below="@+id/time"
+                android:id="@+id/duration"
+                android:gravity="end"
+                android:text="00:00:00/00:00:00"
+                android:layout_marginRight="15dp"
+                android:textColor="@color/text_color_primary"
+                android:layout_alignParentRight="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+            android:layout_height="20dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal">
-
-        <RelativeLayout
-            android:id="@+id/play"
-            android:background="?android:attr/selectableItemBackground"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:layout_weight="1">
-
-            <ImageView
-                android:id="@+id/play_img"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_play_arrow_white_48dp"
-                android:tint="@color/text_color_primary"
-                android:layout_centerHorizontal="true"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/play_img"
-                android:textColor="@color/text_color_primary"
-                android:layout_centerHorizontal="true"
-                android:text="@string/play" />
+                android:text="@string/volume"
+                android:textColor="@color/text_color_primary"/>
 
-        </RelativeLayout>
-        <RelativeLayout
-            android:id="@+id/pause"
-            android:background="?android:attr/selectableItemBackground"
-            android:layout_width="0dp"
+            <SeekBar
+                android:id="@+id/seekbar_volume"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:layout_weight="1">
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/pause_img"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/play"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:src="@drawable/baseline_pause_white_48dp"
-                android:tint="@color/text_color_primary"
-                android:layout_centerHorizontal="true"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/pause_img"
-                android:textColor="@color/text_color_primary"
-                android:layout_centerHorizontal="true"
-                android:text="@string/pause" />
+                android:padding="5dp"
+                android:layout_weight="1">
 
-        </RelativeLayout>
-        <RelativeLayout
-            android:id="@+id/stop"
-            android:background="?android:attr/selectableItemBackground"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:layout_weight="1">
+                <ImageView
+                    android:id="@+id/play_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_play_arrow_white_48dp"
+                    android:tint="@color/text_color_primary"
+                    android:layout_centerHorizontal="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/play_img"
+                    android:textColor="@color/text_color_primary"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/play" />
 
-            <ImageView
-                android:id="@+id/stop_img"
-                android:layout_width="wrap_content"
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/pause"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:src="@drawable/baseline_play_disabled_white_48dp"
-                android:tint="@color/text_color_primary"
-                android:layout_centerHorizontal="true"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/stop_img"
-                android:textColor="@color/text_color_primary"
-                android:layout_centerHorizontal="true"
-                android:text="@string/stop" />
+                android:padding="5dp"
+                android:layout_weight="1">
 
-        </RelativeLayout>
-        <RelativeLayout
-            android:id="@+id/exit"
-            android:background="?android:attr/selectableItemBackground"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:layout_weight="1">
+                <ImageView
+                    android:id="@+id/pause_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_pause_white_48dp"
+                    android:tint="@color/text_color_primary"
+                    android:layout_centerHorizontal="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/pause_img"
+                    android:textColor="@color/text_color_primary"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/pause" />
 
-            <ImageView
-                android:id="@+id/exit_img"
-                android:layout_width="wrap_content"
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/stop"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:src="@drawable/baseline_close_white_48dp"
-                android:tint="@color/text_color_primary"
-                android:layout_centerHorizontal="true"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/exit_img"
-                android:textColor="@color/text_color_primary"
-                android:layout_centerHorizontal="true"
-                android:text="@string/exit" />
+                android:padding="5dp"
+                android:layout_weight="1">
 
-        </RelativeLayout>
-    </LinearLayout>
+                <ImageView
+                    android:id="@+id/stop_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_play_disabled_white_48dp"
+                    android:tint="@color/text_color_primary"
+                    android:layout_centerHorizontal="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/stop_img"
+                    android:textColor="@color/text_color_primary"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/stop" />
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/exit"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/exit_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_close_white_48dp"
+                    android:tint="@color/text_color_primary"
+                    android:layout_centerHorizontal="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/exit_img"
+                    android:textColor="@color/text_color_primary"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/exit" />
+
+            </RelativeLayout>
+        </LinearLayout>
 
     </LinearLayout>
 </LinearLayout>

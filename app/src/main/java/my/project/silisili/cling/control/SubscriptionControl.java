@@ -13,11 +13,6 @@ import my.project.silisili.cling.service.callback.RenderingControlSubscriptionCa
 import my.project.silisili.cling.service.manager.ClingManager;
 import my.project.silisili.cling.util.ClingUtils;
 import my.project.silisili.cling.util.OtherUtils;
-import my.project.silisili.cling.entity.IDevice;
-import my.project.silisili.cling.service.callback.AVTransportSubscriptionCallback;
-import my.project.silisili.cling.service.callback.RenderingControlSubscriptionCallback;
-import my.project.silisili.cling.util.ClingUtils;
-import my.project.silisili.cling.util.OtherUtils;
 
 /**
  * 说明：

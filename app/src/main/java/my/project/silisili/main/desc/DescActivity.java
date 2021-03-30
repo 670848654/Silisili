@@ -4,10 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -15,21 +12,29 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.ctetin.expandabletextviewlibrary.ExpandableTextView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
 import com.r0adkll.slidr.Slidr;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +43,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import co.lujun.androidtagview.TagContainerLayout;
 import co.lujun.androidtagview.TagView;
-import jp.wasabeef.glide.transformations.BlurTransformation;
 import my.project.silisili.R;
 import my.project.silisili.adapter.AnimeDescDetailsAdapter;
 import my.project.silisili.adapter.AnimeDescDramaAdapter;
@@ -48,7 +52,9 @@ import my.project.silisili.bean.AnimeDescDetailsBean;
 import my.project.silisili.bean.AnimeDescHeaderBean;
 import my.project.silisili.bean.AnimeDescRecommendBean;
 import my.project.silisili.bean.DownBean;
-import my.project.silisili.custom.InsideScrollView;
+import my.project.silisili.bean.Event;
+import my.project.silisili.bean.Refresh;
+import my.project.silisili.custom.MyTextView;
 import my.project.silisili.database.DatabaseUtil;
 import my.project.silisili.main.animelist.AnimeListActivity;
 import my.project.silisili.main.base.BaseActivity;
@@ -60,8 +66,6 @@ import my.project.silisili.util.Utils;
 import my.project.silisili.util.VideoUtils;
 
 public class DescActivity extends BaseActivity<DescContract.View, DescPresenter> implements DescContract.View, VideoContract.View {
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     @BindView(R.id.details_list)
     RecyclerView detailsRv;
     @BindView(R.id.recommend_list)
@@ -69,7 +73,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @BindView(R.id.anime_img)
     ImageView animeImg;
     @BindView(R.id.desc)
-    AppCompatTextView desc;
+    ExpandableTextView desc;
+    @BindView(R.id.title)
+    MyTextView title;
     @BindView(R.id.error_bg)
     RelativeLayout errorBg;
     @BindView(R.id.play_layout)
@@ -92,7 +98,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     private VideoPresenter videoPresenter;
     private AnimeDescHeaderBean animeDescHeaderBean = new AnimeDescHeaderBean();
     private List<String> animeUrlList = new ArrayList();
-    private boolean mIsLoad = false;
     private List<DownBean> downBeanList;
     private BottomSheetDialog mBottomSheetDialog;
     private AnimeDescDramaAdapter animeDescDramaAdapter;
@@ -105,11 +110,15 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     LinearLayout desc_view;
     @BindView(R.id.bg)
     ImageView bg;
-    private MenuItem downView, favorite;
+    @BindView(R.id.favorite)
+    MaterialButton favorite;
+    @BindView(R.id.down)
+    MaterialButton down;
     @BindView(R.id.tag_view)
     TagContainerLayout tagContainerLayout;
-    @BindView(R.id.inside_view)
-    InsideScrollView scrollView;
+    @BindView(R.id.scrollview)
+    NestedScrollView scrollView;
+    private int clickIndex; // 当前点击剧集
 
     @Override
     protected DescPresenter createPresenter() {
@@ -128,15 +137,15 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
     @Override
     protected void init() {
+        EventBus.getDefault().register(this);
         StatusBarUtil.setColorForSwipeBack(this, getResources().getColor(R.color.colorPrimaryDark), 0);
-        StatusBarUtil.setTranslucentForImageViewInFragment(this, 0, toolbar);
         if (isDarkTheme) bg.setVisibility(View.GONE);
         Slidr.attach(this, Utils.defaultInit());
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) msg.getLayoutParams();
         params.setMargins(10, 0, 10, 0);
         scrollView.getViewTreeObserver().addOnScrollChangedListener(() -> mSwipe.setEnabled(scrollView.getScrollY() == 0));
+        desc.setNeedExpend(true);
         getBundle();
-        initToolbar();
         initSwipe();
         initAdapter();
         initTagClick();
@@ -156,17 +165,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         }
     }
 
-    public void initToolbar() {
-        toolbar.setTitle(Utils.getString(R.string.loading));
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(view -> finish());
-    }
-
     public void initSwipe() {
         mSwipe.setColorSchemeResources(R.color.pink500, R.color.blue500, R.color.purple500);
+        mSwipe.setProgressViewOffset(true, -0, 150);
         mSwipe.setOnRefreshListener(() -> mPresenter.loadData(true));
-        mSwipe.setRefreshing(true);
     }
 
     @SuppressLint("RestrictedApi")
@@ -256,17 +258,21 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         }
     }
 
+    @OnClick({R.id.browser})
+    public void openBrowser() {
+        Utils.viewInChrome(this, siliUrl);
+    }
+
 
     @SuppressLint("RestrictedApi")
     public void openAnimeDesc() {
         animeImg.setImageDrawable(getDrawable(R.drawable.loading));
-        toolbar.setTitle(Utils.getString(R.string.loading));
         tagContainerLayout.setVisibility(View.GONE);
         tagContainerLayout.setTags("");
         setTextviewEmpty(desc);
-        mSwipe.setRefreshing(true);
         animeDescBeans = new AnimeDescBean();
-        favorite.setVisible(false);
+        favorite.setVisibility(View.GONE);
+        down.setVisibility(View.GONE);
         bg.setImageDrawable(getResources().getDrawable(R.drawable.default_bg));
         mPresenter = new DescPresenter(siliUrl, this);
         mPresenter.loadData(true);
@@ -278,10 +284,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
     public void playVideo(BaseQuickAdapter adapter, int position, AnimeDescDetailsBean bean, RecyclerView recyclerView) {
         alertDialog = Utils.getProDialog(DescActivity.this, R.string.parsing);
-        Button v = (Button) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
-        v.setBackgroundResource(R.drawable.button_selected);
-        v.setTextColor(getResources().getColor(R.color.item_selected_color));
+        MaterialButton materialButton = (MaterialButton) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
+        materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
         bean.setSelected(true);
+        clickIndex = position;
         dramaUrl = VideoUtils.getSiliUrl(bean.getUrl());
         witchTitle = animeTitle + " - " + bean.getTitle();
         animeDescDetailsAdapter.notifyDataSetChanged();
@@ -309,20 +315,20 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         VideoUtils.openPlayer(true, this, witchTitle, animeUrl, animeTitle, dramaUrl, animeDescBeans.getAnimeDescDetailsBeans());
     }
 
-    @Override
+/*    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0x10 && resultCode == 0x20) {
             mSwipe.setRefreshing(true);
             mPresenter.loadData(true);
         }
-    }
+    }*/
 
     @Override
     public void onBackPressed() {
         if (animeUrlList.size() == 1) super.onBackPressed();
         else {
-            if (!mIsLoad) {
+            if (!mSwipe.isRefreshing()) {
                 animeUrlList.remove(animeUrlList.size() - 1);
                 siliUrl = animeUrlList.get(animeUrlList.size() - 1);
                 openAnimeDesc();
@@ -333,61 +339,63 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void favoriteAnime() {
         setResult(200);
         isFavorite = DatabaseUtil.favorite(animeDescHeaderBean);
-        if (isFavorite) {
-            favorite.setIcon(R.drawable.baseline_star_white_48dp);
-            favorite.setTitle(Utils.getString(R.string.remove_favorite));
-            application.showSnackbarMsg(msg, Utils.getString(R.string.join_ok));
-        } else {
-            favorite.setIcon(R.drawable.baseline_star_border_white_48dp);
-            favorite.setTitle(Utils.getString(R.string.favorite));
-            application.showSnackbarMsg(msg, Utils.getString(R.string.join_error));
-        }
+        favorite.setIcon(ContextCompat.getDrawable(this, isFavorite ? R.drawable.baseline_favorite_white_48dp : R.drawable.baseline_favorite_border_white_48dp));
+        favorite.setText(isFavorite ? Utils.getString(R.string.has_favorite) : Utils.getString(R.string.favorite));
+        application.showSnackbarMsg(msg, isFavorite ? Utils.getString(R.string.join_ok) : Utils.getString(R.string.join_error));
+        EventBus.getDefault().post(new Refresh(1));
     }
 
     public void setCollapsingToolbar() {
         DrawableCrossFadeFactory drawableCrossFadeFactory = new DrawableCrossFadeFactory.Builder(300).setCrossFadeEnabled(true).build();
-        Glide.with(this).load(animeDescHeaderBean.getImg())
+/*        Glide.with(this).load(animeDescHeaderBean.getImg())
                 .apply(RequestOptions.bitmapTransform( new BlurTransformation(25, 3)))
                 .transition(DrawableTransitionOptions.withCrossFade(drawableCrossFadeFactory))
+                .into(bg);*/
+        RequestOptions options = new RequestOptions()
+                .centerCrop()
+                .format(DecodeFormat.PREFER_RGB_565)
+                .placeholder(R.drawable.loading)
+                .error(R.drawable.error);
+        Glide.with(this)
+                .load(animeDescHeaderBean.getImg())
+                .transition(DrawableTransitionOptions.withCrossFade(drawableCrossFadeFactory))
+                .apply(options)
                 .into(bg);
         Utils.setDefaultImage(this, animeDescHeaderBean.getImg(), animeImg, false, null, null);
-        toolbar.setTitle(animeDescHeaderBean.getName());
+        title.setText(animeDescHeaderBean.getName());
         if (animeDescHeaderBean.getTagTitles() != null) {
             tagContainerLayout.setTags(animeDescHeaderBean.getTagTitles());
             tagContainerLayout.setVisibility(View.VISIBLE);
         }else
             tagContainerLayout.setVisibility(View.GONE);
         tagContainerLayout.setVisibility(View.VISIBLE);
-        desc.setText(animeDescHeaderBean.getDesc());
+        if (animeDescHeaderBean.getDesc().isEmpty())
+            desc.setVisibility(View.GONE);
+        else {
+            desc.setContent(animeDescHeaderBean.getDesc());
+            desc.setVisibility(View.VISIBLE);
+        }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.down:
-                if (Utils.isFastClick()) showDownDialog();
-                break;
-            case R.id.open_in_browser:
-                if (Utils.isFastClick()) Utils.viewInChrome(this, siliUrl);
-                break;
+    @OnClick({R.id.favorite, R.id.down})
+    public void setFavorite(View view) {
+        switch (view.getId()) {
             case R.id.favorite:
-                if (Utils.isFastClick()) favoriteAnime();
+                favoriteAnime();
+                break;
+            case R.id.down:
+                showDownDialog();
                 break;
         }
-        return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.desc_menu, menu);
-        downView = menu.findItem(R.id.down);
-        favorite = menu.findItem(R.id.favorite);
-        return true;
+    @OnClick(R.id.exit)
+    public void exit() {
+        finish();
     }
 
     @Override
     public void showLoadingView() {
-        mIsLoad = true;
         showEmptyVIew();
         detailsRv.scrollToPosition(0);
         recommendRv.scrollToPosition(0);
@@ -397,7 +405,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void showLoadErrorView(String msg) {
         runOnUiThread(() -> {
             if (!mActivityFinish) {
-                mIsLoad = false;
                 mSwipe.setRefreshing(false);
                 desc_view.setVisibility(View.GONE);
                 playLinearLayout.setVisibility(View.GONE);
@@ -411,10 +418,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @Override
     public void showEmptyVIew() {
         mSwipe.setRefreshing(true);
-        if (downView != null && downView.isVisible())
-            downView.setVisible(false);
-        if (favorite != null && favorite.isVisible())
-            favorite.setVisible(false);
+        if ( favorite.isShown())
+            favorite.setVisibility(View.GONE);
+        if (down.isShown())
+            down.setVisibility(View.GONE);
         desc_view.setVisibility(View.GONE);
         playLinearLayout.setVisibility(View.GONE);
         recommendLinearLayout.setVisibility(View.GONE);
@@ -442,7 +449,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void showSuccessMainView(AnimeDescBean bean) {
         runOnUiThread(() -> {
             if (!mActivityFinish) {
-                mIsLoad = false;
                 setCollapsingToolbar();
                 mSwipe.setRefreshing(false);
                 desc_view.setVisibility(View.VISIBLE);
@@ -472,15 +478,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         isFavorite = is;
         runOnUiThread(() -> {
             if (!mActivityFinish) {
-                if (!favorite.isVisible()) {
-                    if (isFavorite) {
-                        favorite.setIcon(R.drawable.baseline_star_white_48dp);
-                        favorite.setTitle(Utils.getString(R.string.remove_favorite));
-                    } else {
-                        favorite.setIcon(R.drawable.baseline_star_border_white_48dp);
-                        favorite.setTitle(Utils.getString(R.string.favorite));
-                    }
-                    favorite.setVisible(true);
+                if (!favorite.isShown()) {
+                    favorite.setIcon(ContextCompat.getDrawable(this, isFavorite ? R.drawable.baseline_favorite_white_48dp : R.drawable.baseline_favorite_border_white_48dp));
+                    favorite.setText(isFavorite ? Utils.getString(R.string.has_favorite) : Utils.getString(R.string.favorite));
+                    favorite.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -490,8 +491,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void showDownView(List<DownBean> list) {
         runOnUiThread(() -> {
             downBeanList = list;
-            if (downView != null)
-                downView.setVisible(true);
+            down.setVisibility(View.VISIBLE);
         });
     }
 
@@ -537,5 +537,13 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         super.onDestroy();
         if (null != videoPresenter)
             videoPresenter.detachView();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(Event event) {
+        clickIndex = event.getClickIndex();
+        animeDescBeans.getAnimeDescDetailsBeans().get(clickIndex).setSelected(true);
+        animeDescDetailsAdapter.notifyDataSetChanged();
     }
 }

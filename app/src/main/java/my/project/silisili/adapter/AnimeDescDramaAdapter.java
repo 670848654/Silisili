@@ -1,14 +1,15 @@
 package my.project.silisili.adapter;
 
 import android.content.Context;
-import android.widget.Button;
+
+import androidx.annotation.Nullable;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
 
-import androidx.annotation.Nullable;
 import my.project.silisili.R;
 import my.project.silisili.bean.AnimeDescDetailsBean;
 
@@ -25,14 +26,11 @@ public class AnimeDescDramaAdapter extends BaseQuickAdapter<AnimeDescDetailsBean
 
     @Override
     protected void convert(final BaseViewHolder helper, AnimeDescDetailsBean item) {
-        Button btn = helper.getView(R.id.tag_group);
-        helper.setText(R.id.tag_group, item.getTitle());
-        if (item.isSelected()) {
-            helper.getView(R.id.tag_group).setBackgroundResource(R.drawable.button_selected);
-            btn.setTextColor(context.getResources().getColor(R.color.tabSelectedTextColor));
-        } else {
-            helper.getView(R.id.tag_group).setBackgroundResource(R.drawable.button_default);
-            btn.setTextColor(context.getResources().getColor(R.color.text_color_primary));
-        }
+        MaterialButton materialButton = helper.getView(R.id.tag_group);
+        helper.setText(R.id.tag_group, item.getTitle().replaceAll("第", "").replaceAll("集(.*)","").replaceAll("话(.*)",""));
+        if (item.isSelected())
+            materialButton.setTextColor(context.getResources().getColor(R.color.tabSelectedTextColor));
+        else
+            materialButton.setTextColor(context.getResources().getColor(R.color.text_color_primary));
     }
 }

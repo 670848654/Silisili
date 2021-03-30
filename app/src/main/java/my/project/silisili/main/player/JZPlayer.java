@@ -116,10 +116,10 @@ public class JZPlayer extends JzvdStd {
                 break;
             case R.id.airplay:
                 Bundle bundle = new Bundle();
-                bundle.putString("playUrl", jzDataSource.getCurrentUrl().toString());
-                bundle.putLong("duration", getDrawingTime());
-                Log.e("duration", getDrawingTime() + "");
+                Log.e("duration", getDuration() + "");
                 Log.e("playUrl", jzDataSource.getCurrentUrl().toString());
+                bundle.putString("playUrl", jzDataSource.getCurrentUrl().toString());
+                bundle.putLong("duration", getDuration());
                 context.startActivity(new Intent(context, DLNAActivity.class).putExtras(bundle));
                 break;
         }
@@ -163,6 +163,16 @@ public class JZPlayer extends JzvdStd {
         }
         if (screen == SCREEN_FULLSCREEN)
             ibLock.setVisibility(ibLock.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+    }
+
+    public void playingShow() {
+        setAllControlsVisiblity(View.INVISIBLE, View.INVISIBLE, View.INVISIBLE,
+                View.VISIBLE, View.INVISIBLE, View.INVISIBLE, View.INVISIBLE);
+        ibLock.setVisibility(GONE);
+        fastForward.setVisibility(GONE);
+        quickRetreat.setVisibility(GONE);
+        config.setVisibility(GONE);
+        airplay.setVisibility(GONE);
     }
 
     @Override

@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -20,10 +19,12 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fanchen.sniffing.DefaultFilter;
 import com.fanchen.sniffing.SniffingUICallback;
 import com.fanchen.sniffing.SniffingVideo;
 import com.fanchen.sniffing.web.SniffingUtil;
+import com.google.android.material.button.MaterialButton;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,7 @@ import my.project.silisili.R;
 import my.project.silisili.adapter.AnimeDescDramaAdapter;
 import my.project.silisili.application.Silisili;
 import my.project.silisili.bean.AnimeDescDetailsBean;
+import my.project.silisili.bean.Event;
 import my.project.silisili.main.base.BaseActivity;
 import my.project.silisili.main.base.Presenter;
 import my.project.silisili.main.video.VideoContract;
@@ -59,8 +61,6 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     LinearLayout linearLayout;
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
-    @BindView(R.id.anime_title)
-    TextView titleView;
     @BindView(R.id.pic_config)
     RelativeLayout picConfig;
     private VideoPresenter presenter;
@@ -109,7 +109,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         witchTitle = bundle.getString("title");
         //番剧名称
         animeTitle = bundle.getString("animeTitle");
-        titleView.setText(animeTitle);
+//        titleView.setText(animeTitle);
         //源地址
         siliUrl = bundle.getString("sili");
         //剧集list
@@ -133,13 +133,13 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
             @Override
             public void onDrawerOpened(@NonNull View drawerView) {
                 if (drawerLayout.isDrawerOpen(GravityCompat.START))
-                    JzvdStd.goOnPlayOnPause();
+                    player.goOnPlayOnPause();
             }
 
             @Override
             public void onDrawerClosed(@NonNull View drawerView) {
                 if (!drawerLayout.isDrawerOpen(GravityCompat.START))
-                    JzvdStd.goOnPlayOnResume();
+                    player.goOnPlayOnResume();
             }
 
             @Override
@@ -156,12 +156,11 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         player.setListener(this, this, this);
         player.backButton.setOnClickListener(v -> finish());
         // 加载视频失败，嗅探视频
-        player.snifferBtn.setOnClickListener(v -> snifferPlayUrl(url));
+        player.snifferBtn.setOnClickListener(v -> sniffer(true));
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) picConfig.setVisibility(View.GONE);
         else picConfig.setVisibility(View.VISIBLE);
         if (gtSdk23()) player.tvSpeed.setVisibility(View.VISIBLE);
         else player.tvSpeed.setVisibility(View.GONE);
-        player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
         player.fullscreenButton.setOnClickListener(view -> {
             if (!Utils.isFastClick()) return;
             if (drawerLayout.isDrawerOpen(GravityCompat.END))
@@ -170,14 +169,13 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         });
         Jzvd.FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
         Jzvd.NORMAL_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
-        player.startButton.performClick();
-        player.startVideo();
+        player.playingShow();
+        checkPlayUrl();
     }
 
     public void startPic() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START))
             drawerLayout.closeDrawer(GravityCompat.START);
-        JzvdStd.goOnPlayOnResume();
         new Handler().postDelayed(this::enterPicInPic, 500);
     }
 
@@ -188,15 +186,15 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         recyclerView.setAdapter(dramaAdapter);
         dramaAdapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
-            setResult(0x20);
+//            setResult(0x20);
             drawerLayout.closeDrawer(GravityCompat.END);
             AnimeDescDetailsBean bean = (AnimeDescDetailsBean) adapter.getItem(position);
-            player.onPrepared();
+            Jzvd.releaseAllVideos();
             alertDialog = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
-            Button v = (Button) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
-            v.setBackgroundResource(R.drawable.button_selected);
-            v.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
+            MaterialButton materialButton = (MaterialButton) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
+            materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
             bean.setSelected(true);
+            EventBus.getDefault().post(new Event(position));
             siliUrl = VideoUtils.getSiliUrl(bean.getUrl());
             witchTitle = animeTitle + " - " + bean.getTitle();
             presenter = new VideoPresenter(animeTitle, siliUrl, PlayerActivity.this);
@@ -230,13 +228,32 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         player.startVideo();
     }
 
+    private void checkPlayUrl() {
+        if (url.contains("mp4") || url.contains("m3u8"))
+            play(url);
+        else
+            sniffer(false);
+    }
+
+    /**
+     * 播放视频
+     * @param playUrl
+     */
+    private void play(String playUrl) {
+        Jzvd.releaseAllVideos();
+        player.currentSpeedIndex = 1;
+        player.setUp(playUrl, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
+        player.startVideo();
+    }
+
+
     /**
      * 嗅探视频真实连接
-     * @param animeUrl
      */
-    private void snifferPlayUrl(String animeUrl) {
-        alertDialog = Utils.getProDialog(PlayerActivity.this, R.string.should_be_used_web);
-        SniffingUtil.get().activity(this).referer(animeUrl).callback(this).url(animeUrl).start();
+    private void sniffer(boolean showDialog) {
+        if (showDialog)
+            alertDialog = Utils.getProDialog(PlayerActivity.this, R.string.should_be_used_web);
+        SniffingUtil.get().activity(this).referer(url).callback(this).url(url).start();
     }
 
     private void initUserConfig() {
@@ -319,14 +336,15 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     @Override
     protected void onPause() {
         super.onPause();
-        if (!inMultiWindow()) JzvdStd.goOnPlayOnPause();
+        if (!inMultiWindow()) player.goOnPlayOnPause();
+        else player.goOnPlayOnResume();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         hideNavBar();
-        if (!inMultiWindow()) JzvdStd.goOnPlayOnResume();
+        if (!inMultiWindow()) player.goOnPlayOnResume();
     }
 
     @Override
@@ -368,6 +386,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         if (isInPictureInPictureMode) {
             player.startPIP();
             isPip = true;
+            player.goOnPlayOnResume();
         } else isPip = false;
     }
 
@@ -380,7 +399,8 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     public void getVideoSuccess(String url) {
         runOnUiThread(() -> {
             hideNavBar();
-            playAnime(url);
+            this.url = url;
+            checkPlayUrl();
         });
     }
 
@@ -390,10 +410,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
 //            application.showToastMsg(Utils.getString(R.string.should_be_used_web));
 //            SniffingUtil.get().activity(this).referer(iframeUrl).callback(this).url(iframeUrl).start();
             url = iframeUrl;
-            Jzvd.releaseAllVideos();
-            player.currentSpeedIndex = 1;
-            player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
-            player.startVideo();
+            checkPlayUrl();
         });
     }
 
@@ -443,19 +460,18 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     public void onSniffingFinish(View webView, String url) {
         SniffingUtil.get().releaseWebView();
         cancelDialog();
+        hideNavBar();
     }
 
     @Override
     public void onSniffingSuccess(View webView, String url, List<SniffingVideo> videos) {
-        List<String> urls = new ArrayList<>();
-        for (SniffingVideo video : videos) {
-            urls.add(video.getUrl());
-        }
-        VideoUtils.showMultipleVideoSources(this,
-                urls,
-                (dialog, index) -> playAnime(urls.get(index)), (dialog, which) -> {
-                    dialog.dismiss();
-                }, 1);
+        List<String> urls = Utils.ridRepeat(videos);
+        if (urls.size() > 1)
+            VideoUtils.showMultipleVideoSources(this,
+                    urls,
+                    (dialog, index) -> playAnime(urls.get(index)),
+                    (dialog, which) -> dialog.dismiss(), 1);
+        else playAnime(urls.get(0));
     }
 
     @Override

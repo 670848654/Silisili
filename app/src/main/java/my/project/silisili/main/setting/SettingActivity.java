@@ -124,7 +124,7 @@ public class SettingActivity extends BaseActivity {
 
     public void setDomain() {
         AlertDialog alertDialog;
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_domain, null);
         Spinner spinner = view.findViewById(R.id.prefix);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -175,7 +175,7 @@ public class SettingActivity extends BaseActivity {
     }
 
     public void setDefaultPlayer() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
         builder.setTitle("请选择视频播放器");
         builder.setSingleChoiceItems(playerItems, (Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0), (dialog, which) -> {
             switch (which){
@@ -195,7 +195,7 @@ public class SettingActivity extends BaseActivity {
     }
 
     public void setX5State() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
         builder.setTitle("请选择内核状态");
         builder.setSingleChoiceItems(x5Items, Utils.loadX5() ? 0 : 1, (dialog, which) -> {
             switch (which){

@@ -2,253 +2,354 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/activity_main"
     android:background="@color/window_bg"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/bg"
-            android:src="@drawable/default_bg"
-            android:scaleType="centerCrop"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+    <ImageView
+        android:id="@+id/bg"
+        android:src="@drawable/default_bg"
+        android:scaleType="centerCrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/desc_gradient"
-            android:fitsSystemWindows="true" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/desc_gradient"
+        android:fitsSystemWindows="true" />
 
-        <com.google.android.material.appbar.AppBarLayout
+    <!--<com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/translucent"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:elevation="0dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/ToolbarStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="?attr/actionBarSize"
             android:background="@color/translucent"
-            android:theme="@style/AppTheme.AppBarOverlay"
-            app:elevation="0dp">
+            android:theme="@style/DescToolbarTheme"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                style="@style/ToolbarStyle"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@color/translucent"
-                android:theme="@style/DescToolbarTheme"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+    </com.google.android.material.appbar.AppBarLayout>-->
 
-        </com.google.android.material.appbar.AppBarLayout>
+    <my.project.silisili.custom.MySwipeRefreshLayout
+        android:id="@+id/mSwipe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:id="@+id/msg"
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrollview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_anchor="@id/toolbar"
-            app:layout_anchorGravity="center" />
+            android:layout_height="match_parent">
 
-        <my.project.silisili.custom.MySwipeRefreshLayout
-            android:id="@+id/mSwipe"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-            <androidx.core.widget.NestedScrollView
+            <LinearLayout
+                android:clipChildren="true"
+                android:layout_marginTop="?attr/actionBarSize"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <LinearLayout
-                    android:clipChildren="true"
+                    android:id="@+id/desc_view"
+                    android:visibility="visible"
                     android:layout_width="match_parent"
+                    android:clipChildren="false"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <LinearLayout
-                        android:id="@+id/desc_view"
-                        android:visibility="gone"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/img_box"
                         android:layout_width="match_parent"
-                        android:clipChildren="false"
-                        android:layout_height="270dp"
-                        android:orientation="horizontal">
+                        android:layout_height="203dp">
+
+                        <ImageView
+                            android:id="@+id/exit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="20dp"
+                            android:clickable="true"
+                            android:src="@drawable/baseline_arrow_back_white_48dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/card_view"
                             android:layout_width="0dp"
-                            android:layout_height="250dp"
-                            android:layout_margin="10dp"
-                            android:layout_weight="4"
-                            app:cardBackgroundColor="@color/toolbar_layout_bg"
+                            android:layout_height="0dp"
+                            app:cardBackgroundColor="@android:color/transparent"
                             app:cardCornerRadius="4dp"
-                            app:cardElevation="4dp">
+                            app:cardElevation="4dp"
+                            app:layout_constraintDimensionRatio="W,1:1.4"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:cardUseCompatPadding="false">
 
-                            <ImageView
-                                android:id="@+id/anime_img"
+                            <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="250dp"
-                                android:background="@drawable/loading"
-                                android:scaleType="centerCrop" />
+                                android:layout_height="match_parent">
+
+                                <ImageView
+                                    android:id="@+id/anime_img"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:scaleType="centerCrop" />
+
+                            </RelativeLayout>
 
                         </androidx.cardview.widget.CardView>
 
-                        <RelativeLayout
-                            android:layout_width="0dp"
-                            android:layout_height="250dp"
-                            android:clipChildren="true"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginRight="10dp"
-                            android:layout_marginBottom="10dp"
-                            android:layout_weight="6">
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
-                            <my.project.silisili.custom.InsideScrollView
-                                android:id="@+id/inside_view"
-                                android:scrollbars="none"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical">
-
-                                    <co.lujun.androidtagview.TagContainerLayout
-                                        android:id="@+id/tag_view"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:layout_margin="0dp"
-                                        app:container_border_color="@color/translucent"
-                                        app:container_background_color="@color/translucent"
-                                        app:tag_corner_radius="4dp"
-                                        app:tag_text_color="@color/white"
-                                        app:tag_border_color="#73e55578"
-                                        app:tag_background_color="#73e55578"
-                                        app:tag_clickable="true"
-                                        app:tag_horizontal_padding="12dp"
-                                        app:tag_theme="none"/>
-
-                                    <androidx.appcompat.widget.AppCompatTextView
-                                        android:id="@+id/desc"
-                                        android:layout_marginTop="5dp"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:scrollbars="none"
-                                        android:textColor="@color/white"
-                                        android:textSize="14sp" />
-
-                                </LinearLayout>
-
-                            </my.project.silisili.custom.InsideScrollView>
-
-                        </RelativeLayout>
-
-                    </LinearLayout>
-
-                    <!-- 剧集视图 -->
-                    <LinearLayout
-                        android:id="@+id/play_layout"
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="5dp"
-                        android:visibility="gone">
+                        android:layout_height="wrap_content">
 
-                        <androidx.appcompat.widget.AppCompatTextView
+                        <my.project.silisili.custom.MyTextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:text="选集"
-                            android:textSize="16sp"
-                            android:textColor="@android:color/white"
-                            android:textStyle="bold"/>
+                            android:id="@+id/title"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginRight="20dp"
+                            android:gravity="center_horizontal"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:marqueeRepeatLimit="marquee_forever"
+                            android:ellipsize="marquee"
+                            android:scrollHorizontally="true"
+                            android:singleLine="true"
+                            android:textStyle="bold"
+                            android:shadowColor="@color/light_toolbar_color_lt23"
+                            android:shadowDx="1.0"
+                            android:shadowDy="1.0"
+                            android:shadowRadius="2.0"
+                            android:textColor="@color/white"
+                            android:textSize="18sp" />
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/details_list"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clipToPadding="false"
-                            android:fadingEdge="none"
-                            android:fillViewport="true"
-                            android:paddingBottom="5dp" />
-
-                        <RelativeLayout
-                            android:id="@+id/open_drama"
+                        <LinearLayout
+                            android:id="@+id/btn_view"
+                            android:layout_below="@id/title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="right"
-                            android:layout_marginTop="4dp"
-                            android:layout_marginRight="4dp">
+                            android:layout_centerHorizontal="true"
+                            android:orientation="horizontal">
 
-                            <ImageView
-                                android:id="@+id/down_img"
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:layout_marginLeft="2dp"
-                                android:layout_toRightOf="@id/drama"
-                                android:scaleType="centerInside"
-                                android:src="@drawable/ic_keyboard_arrow_down_white_48dp"
-                                android:tint="@color/white" />
-
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/drama"
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/favorite"
+                                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="展开全部"
-                                android:textStyle="bold"
-                                android:textColor="@color/colorAccent" />
-                        </RelativeLayout>
+                                android:textSize="14sp"
+                                app:strokeColor="@color/mtrl_btn_stroke_color_selector"
+                                android:textColor="@color/white"
+                                app:iconTint="@color/white"/>
 
-                    </LinearLayout>
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/down"
+                                android:visibility="gone"
+                                android:layout_marginLeft="5dp"
+                                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                app:icon="@drawable/baseline_down_white_48dp"
+                                android:text="@string/down"
+                                app:strokeColor="@color/mtrl_btn_stroke_color_selector"
+                                android:textColor="@color/white"
+                                app:iconTint="@color/white"/>
 
-                    <!-- 推荐视图 -->
-                    <LinearLayout
-                        android:id="@+id/recommend_layout"
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/browser"
+                                android:layout_marginLeft="5dp"
+                                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                app:icon="@drawable/baseline_language_white_48dp"
+                                android:text="@string/open_browser"
+                                app:strokeColor="@color/mtrl_btn_stroke_color_selector"
+                                android:textColor="@color/white"
+                                app:iconTint="@color/white"/>
+
+                        </LinearLayout>
+
+                        <co.lujun.androidtagview.TagContainerLayout
+                            android:layout_below="@+id/btn_view"
+                            android:id="@+id/tag_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            app:container_border_color="@color/translucent"
+                            app:container_background_color="@color/translucent"
+                            app:tag_corner_radius="4dp"
+                            app:container_gravity="center"
+                            app:tag_text_color="@color/white"
+                            app:tag_border_color="#73e55578"
+                            app:tag_background_color="#73e55578"
+                            app:tag_clickable="true"
+                            app:tag_horizontal_padding="10dp"
+                            app:tag_theme="none"/>
+
+                        <com.ctetin.expandabletextviewlibrary.ExpandableTextView
+                            android:id="@+id/desc"
+                            android:layout_below="@id/tag_view"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:ep_need_link="false"
+                            app:ep_need_mention="true"
+                            app:ep_max_line="4"
+                            android:lineSpacingExtra="4dp"
+                            app:ep_need_contract="true"
+                            app:ep_need_animation="true"
+                            app:ep_expand_color="@color/colorAccent"
+                            android:textColor="@color/white"
+                            android:textSize="14sp" />
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+                <!-- 剧集视图 -->
+                <LinearLayout
+                    android:id="@+id/play_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="10dp"
+                    android:padding="5dp"
+                    android:visibility="gone">
+
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="5dp"
-                        android:visibility="gone">
+                        android:layout_marginBottom="8dp">
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:layout_width="match_parent"
+                            android:layout_centerVertical="true"
+                            android:id="@+id/selected_text"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:text="相关推荐"
+                            android:text="选集"
                             android:textSize="16sp"
-                            android:textColor="@android:color/white"
+                            android:textColor="@color/white"
                             android:textStyle="bold"/>
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recommend_list"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clipToPadding="false"
-                            android:fadingEdge="none"
-                            android:fillViewport="true"
-                            android:paddingBottom="5dp" />
-                    </LinearLayout>
-
-                    <!-- 错误视图 -->
-                    <RelativeLayout
-                        android:id="@+id/error_bg"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@color/translucent"
-                        android:visibility="gone">
-
-                        <TextView
-                            android:id="@+id/error_msg"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="8dp"
-                            android:background="@drawable/parsing_error_bg"
-                            android:gravity="center"
-                            android:lineSpacingExtra="10dp"
-                            android:padding="10dp"
-                            android:textColor="#333"
-                            android:textSize="16sp" />
-                        <!--android:background="#f4f5f7"-->
                     </RelativeLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/details_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:fadingEdge="none"
+                        android:fillViewport="true"
+                        android:paddingBottom="5dp" />
+
+                    <RelativeLayout
+                        android:id="@+id/open_drama"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="right"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="4dp">
+
+                        <ImageView
+                            android:id="@+id/down_img"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginLeft="2dp"
+                            android:layout_toRightOf="@id/drama"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_keyboard_arrow_down_white_48dp"
+                            android:tint="@color/white" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/drama"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="展开全部"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorAccent" />
+                    </RelativeLayout>
+
                 </LinearLayout>
-            </androidx.core.widget.NestedScrollView>
-        </my.project.silisili.custom.MySwipeRefreshLayout>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+                <!-- 推荐视图 -->
+                <LinearLayout
+                    android:id="@+id/recommend_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="5dp"
+                    android:visibility="gone">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:text="相关推荐"
+                        android:textSize="16sp"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recommend_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:fadingEdge="none"
+                        android:fillViewport="true"
+                        android:paddingBottom="5dp" />
+                </LinearLayout>
+
+                <!-- 错误视图 -->
+                <RelativeLayout
+                    android:id="@+id/error_bg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/translucent"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/error_msg"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:background="@drawable/parsing_error_bg"
+                        android:gravity="center"
+                        android:lineSpacingExtra="10dp"
+                        android:padding="10dp"
+                        android:textColor="#333"
+                        android:textSize="16sp" />
+                    <!--android:background="#f4f5f7"-->
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </my.project.silisili.custom.MySwipeRefreshLayout>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@id/tag_view"
+        app:layout_anchorGravity="center" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+

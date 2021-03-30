@@ -2,12 +2,13 @@ package my.project.silisili.adapter;
 
 import android.content.Context;
 
+import androidx.annotation.Nullable;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
-import androidx.annotation.Nullable;
 import my.project.silisili.R;
 import my.project.silisili.bean.AnimeDescRecommendBean;
 import my.project.silisili.util.Utils;

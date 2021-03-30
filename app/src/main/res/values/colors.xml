@@ -293,6 +293,7 @@
     <color name="item_selected_color">#FFF</color>
     <color name="jd_bg">#000</color>
     <color name="white">#FFF</color>
+    <color name="drama">#fdfdfd</color>
 
     <color name="light_toolbar_color">#FFF</color>
     <color name="light_toolbar_color_lt23">#bdbdbd</color>

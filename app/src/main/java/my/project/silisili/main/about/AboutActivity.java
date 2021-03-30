@@ -144,7 +144,7 @@ public class AboutActivity extends BaseActivity {
 
     public void showUpdateLogs() {
         AlertDialog alertDialog;
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_update_log, null);
         RecyclerView logs = view.findViewById(R.id.rv_list);
         logs.setLayoutManager(new LinearLayoutManager(this));
@@ -165,6 +165,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("1.0-beta13", "2021年3月30日", "支持Android 11\n修复已知问题，部分UI变更"));
         logsList.add(new LogBean("1.0-beta12", "2021年3月11日", "修复ExoPlayer不支持（http -> https | https -> http）重定向导致部分番剧无法正常播放的问题\n修复动漫分类界面浮动按钮在有导航栏的设备上被遮挡的问题\n内置播放器新增倍数播放（0.5X - 3X）\n新增视频投屏功能"));
         logsList.add(new LogBean("1.0-beta11", "2021年1月25日", "域名变更为http://www.silisili.in\n修复动漫分类分页Bug\n动漫分类界面改动\n内置播放器快进、后退参数可设置（5s，10s，15s，30s），播放器界面点击“设置”图标，在弹窗界面中配置"));
         logsList.add(new LogBean("1.0-beta10", "2020年8月19日", "修复国语分类翻页Bug\n修复番剧详情加载失败闪退Bug"));
@@ -216,7 +217,7 @@ public class AboutActivity extends BaseActivity {
                                            dialog.dismiss();
                                             Utils.putTextIntoClip(downloadUrl);
                                             application.showSuccessToastMsg(Utils.getString(R.string.url_copied));
-                                            Utils.openBrowser(AboutActivity.this, downloadUrl);
+                                            Utils.viewInChrome(AboutActivity.this, downloadUrl);
                                    },
                                    (dialog, which) -> dialog.dismiss()
                                    );

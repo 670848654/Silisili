@@ -15,6 +15,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.r0adkll.slidr.Slidr;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +26,7 @@ import butterknife.BindView;
 import my.project.silisili.R;
 import my.project.silisili.adapter.FavoriteListAdapter;
 import my.project.silisili.bean.AnimeDescHeaderBean;
+import my.project.silisili.bean.Refresh;
 import my.project.silisili.custom.CustomLoadMoreView;
 import my.project.silisili.database.DatabaseUtil;
 import my.project.silisili.main.base.BaseActivity;
@@ -64,6 +69,7 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
 
     @Override
     protected void init() {
+        EventBus.getDefault().register(this);
         Slidr.attach(this,Utils.defaultInit());
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) show.getLayoutParams();
         params.setMargins(10, 0, 10, Utils.getNavigationBarHeight(this) - 5);
@@ -194,4 +200,21 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
         } else
             adapter.addData(list);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(Refresh refresh) {
+        if (refresh.getIndex() == 0) {
+            isMain = true;
+            favoriteList.clear();
+            mPresenter = createPresenter();
+            loadData();
+        }
+    }
+
 }

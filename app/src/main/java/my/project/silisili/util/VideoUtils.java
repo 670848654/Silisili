@@ -6,10 +6,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
+
 import java.io.Serializable;
 import java.util.List;
 
-import androidx.appcompat.app.AlertDialog;
 import my.project.silisili.R;
 import my.project.silisili.application.Silisili;
 import my.project.silisili.bean.AnimeDescDetailsBean;
@@ -23,11 +24,11 @@ public class VideoUtils {
     /**
      * 发现多个播放地址时弹窗
      *
-             * @param context
+     * @param context
      * @param list
      * @param listener
      * @param type 0 old 1 new
-            */
+     */
     public static void showMultipleVideoSources(Context context,
                                                 List<String> list,
                                                 DialogInterface.OnClickListener listener, DialogInterface.OnClickListener listener2, int type) {
@@ -36,7 +37,7 @@ public class VideoUtils {
             if (type == 0) items[i] = getSiliUrl(list.get(i));
             else items[i] = list.get(i);
         }
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context, R.style.DialogStyle);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
         builder.setTitle(Utils.getString(R.string.select_video_source));
         builder.setCancelable(false);
         builder.setItems(items, listener);

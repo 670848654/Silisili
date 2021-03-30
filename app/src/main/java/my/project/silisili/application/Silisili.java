@@ -2,9 +2,12 @@ package my.project.silisili.application;
 
 import android.app.Activity;
 import android.app.Application;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
@@ -18,9 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import androidx.annotation.ColorRes;
-import androidx.annotation.DrawableRes;
-import androidx.appcompat.app.AppCompatDelegate;
 import es.dmoral.toasty.Toasty;
 import my.project.silisili.R;
 import my.project.silisili.util.SharedPreferencesUtils;

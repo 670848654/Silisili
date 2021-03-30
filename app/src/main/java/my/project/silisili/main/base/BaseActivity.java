@@ -1,15 +1,20 @@
 package my.project.silisili.main.base;
 
 import android.Manifest;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
@@ -45,7 +50,7 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
         if (!getRunningActivityName().equals("StartActivity") && !getRunningActivityName().equals("HomeActivity")) overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         initBeforeView();
         setContentView(setLayoutRes());
-        if (Utils.checkHasNavigationBar(this)) {
+        /*if (Utils.checkHasNavigationBar(this)) {
             getWindow().setFlags(
                     WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                     WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
@@ -54,6 +59,26 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 getWindow().setNavigationBarDividerColor(Color.TRANSPARENT);
             }
+        }*/
+        if (Utils.checkHasNavigationBar(this)) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+            getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+            );
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                getWindow().setNavigationBarColor(Color.TRANSPARENT);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    getWindow().setNavigationBarDividerColor(Color.TRANSPARENT);
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    getWindow().setNavigationBarContrastEnforced(false);
+                    getWindow().setStatusBarContrastEnforced(false);
+                }
+            }
         }
         mUnBinder = ButterKnife.bind(this);
         if (application == null) {
@@ -61,14 +86,7 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
         }
         application.addActivity(this);
         if (EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            //创建database路路径
-            Utils.creatFile();
-            DatabaseUtil.CREATE_TABLES();
-            init();
-            setStatusBarColor();
-            initCustomViews();
-            mPresenter = createPresenter();
-            loadData();
+            isManager();
         } else {
             EasyPermissions.requestPermissions(this, Utils.getString(R.string.permissions),
                     300, Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -158,6 +176,8 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
     }
 
+    public boolean gtSdk30() { return Build.VERSION.SDK_INT >= Build.VERSION_CODES.R; }
+
     private String getRunningActivityName() {
         String contextString = this.toString();
         return contextString.substring(contextString.lastIndexOf(".") + 1,
@@ -183,12 +203,50 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
         }
     }
 
+    private void isManager() {
+        if (gtSdk30()) {
+            if (Environment.isExternalStorageManager()) build();
+            else getManager();
+        } else build();
+    }
+
+    private void build() {
+        //创建database路路径
+        Utils.creatFile();
+        DatabaseUtil.CREATE_TABLES();
+        init();
+        setStatusBarColor();
+        initCustomViews();
+        mPresenter = createPresenter();
+        loadData();
+    }
+
+    private void getManager() {
+        AlertDialog alertDialog;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+        builder.setPositiveButton(Utils.getString(R.string.authorize_msg), null);
+        builder.setTitle(Utils.getString(R.string.authorize_title_msg));
+        builder.setMessage(Utils.getString(R.string.file_manger_msg));
+        builder.setCancelable(false);
+        alertDialog = builder.create();
+        alertDialog.show();
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            alertDialog.dismiss();
+            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+            intent.setData(Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent, 0x99);
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 0x99) isManager();
+    }
+
     @Override
     public void finish() {
         super.finish();
-        runOnUiThread(() -> {
-            if (!getRunningActivityName().equals("StartActivity") && !getRunningActivityName().equals("HomeActivity") && !getRunningActivityName().equals("PlayerActivity"))
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        });
+        if (!getRunningActivityName().equals("StartActivity") && !getRunningActivityName().equals("HomeActivity") && !getRunningActivityName().equals("PlayerActivity")) overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 }

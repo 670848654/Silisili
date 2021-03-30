@@ -2,12 +2,13 @@ package my.project.silisili.adapter;
 
 import android.view.ViewGroup;
 
-import java.util.HashMap;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+
+import java.util.HashMap;
+
 import my.project.silisili.R;
 import my.project.silisili.main.home.WeekFragment;
 import my.project.silisili.util.Utils;
