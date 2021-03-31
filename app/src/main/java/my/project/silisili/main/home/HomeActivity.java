@@ -278,7 +278,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
             application.showErrorToastMsg(msg);
             application.error = msg;
             application.week = new JSONObject();
-            setWeekAdapter();
+            setWeekAdapter(week);
         });
     }
 
@@ -296,25 +296,41 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
                 title = map.get("title") == null ? "加载失败" : map.get("title").toString();
                 animeUrl = map.get("url") == null ? "" : map.get("url").toString();
                 navigationView.getMenu().getItem(0).setTitle(title);
-                setWeekAdapter();
+                setWeekAdapter(week);
             }
         });
     }
 
-    public void setWeekAdapter() {
+    public void setWeekAdapter(int pos) {
         adapter = new WeekAdapter(getSupportFragmentManager(), tab.getTabCount());
         try {
             Field field = ViewPager.class.getDeclaredField("mRestoredCurItem");
             field.setAccessible(true);
             field.set(viewpager, week);
         } catch (Exception e) {
-            viewpager.setCurrentItem(week);
+            viewpager.setCurrentItem(pos);
             e.printStackTrace();
         }
         viewpager.setAdapter(adapter);
         for (int i = 0; i < tabs.length; i++) {
             tab.getTabAt(i).setText(tabs[i]);
         }
+        viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                week = position;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     public void removeFragmentTransaction() {
@@ -397,12 +413,8 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
             emptyView.setBackgroundColor(isDarkTheme ? getResources().getColor(R.color.dark_window_color) : getResources().getColor(R.color.light_window_color));
             if (gtSdk23()) StatusBarUtil.setColorForDrawerLayout(this, drawer, isDarkTheme ? getResources().getColor(R.color.dark_toolbar_color) : getResources().getColor(R.color.light_toolbar_color), 0);
             else StatusBarUtil.setColorForDrawerLayout(this, drawer, isDarkTheme ? getResources().getColor(R.color.dark_toolbar_color) : getResources().getColor(R.color.light_toolbar_color_lt23), 0);
-            if (adapter != null)
-                for (int i=0,size=adapter.getCount(); i<size; i++) {
-                    WeekFragment weekFragment = (WeekFragment) adapter.getItem(i);
-                    if (weekFragment.adapter != null)
-                        weekFragment.adapter .notifyDataSetChanged();
-                }
+            removeFragmentTransaction();
+            setWeekAdapter(week);
             isChangingTheme = false;
         }
     }

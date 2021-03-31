@@ -197,6 +197,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
             EventBus.getDefault().post(new Event(position));
             siliUrl = VideoUtils.getSiliUrl(bean.getUrl());
             witchTitle = animeTitle + " - " + bean.getTitle();
+            player.playingShow();
             presenter = new VideoPresenter(animeTitle, siliUrl, PlayerActivity.this);
             presenter.loadData(true);
         });
