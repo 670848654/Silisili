@@ -28,7 +28,6 @@ public class FavoriteListAdapter extends BaseQuickAdapter<AnimeDescHeaderBean, B
         String img = item.getImg();
         Utils.setCardDefaultBg(context, helper.getView(R.id.card_view), helper.getView(R.id.title));
         Utils.setDefaultImage(context, img.contains("http") ? img : Silisili.DOMAIN + img, helper.getView(R.id.img), true, helper.getView(R.id.card_view), helper.getView(R.id.title));
-//        Utils.setCardBg(context, img.contains("http") ? img : Silisili.DOMAIN + img, helper.getView(R.id.card_view), helper.getView(R.id.title));
         helper.setText(R.id.title, item.getName());
 
     }

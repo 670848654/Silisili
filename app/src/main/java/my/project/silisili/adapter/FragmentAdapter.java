@@ -25,7 +25,6 @@ public class FragmentAdapter extends BaseQuickAdapter<HomeWekBean,BaseViewHolder
         Utils.setDefaultImage(context, item.getImg().startsWith("http") ? item.getImg() : Silisili.DOMAIN + item.getImg(),helper.getView(R.id.img), true, helper.getView(R.id.card_view), helper.getView(R.id.title));
         helper.setText(R.id.title, item.getTitle());
         helper.setText(R.id.drama, item.getDrama());
-//        Utils.setCardBg(context, item.getImg().startsWith("http") ? item.getImg() : Silisili.DOMAIN + item.getImg(), helper.getView(R.id.card_view), helper.getView(R.id.title));
         if (item.isHasNew()) helper.setVisible(R.id.new_view, true);
         else helper.setVisible(R.id.new_view, false);
     }

@@ -7,8 +7,8 @@ android {
         applicationId "my.project.silisili"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 13
-        versionName "1.0-beta13"
+        versionCode 14
+        versionName "1.0-beta14"
         ndk { abiFilters "armeabi", "x86"}
         resConfigs "zh"
     }
@@ -43,7 +43,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
-    implementation 'pub.devrel:easypermissions:0.1.9'
+    implementation 'pub.devrel:easypermissions:3.0.0'
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
     implementation 'com.r0adkll:slidableactivity:2.0.5'
     implementation 'com.jakewharton:butterknife:10.0.0'

@@ -16,10 +16,13 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.r0adkll.slidr.Slidr;
 
+import org.greenrobot.eventbus.EventBus;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import my.project.silisili.R;
 import my.project.silisili.application.Silisili;
+import my.project.silisili.bean.Refresh;
 import my.project.silisili.main.base.BaseActivity;
 import my.project.silisili.main.base.Presenter;
 import my.project.silisili.util.SharedPreferencesUtils;
@@ -152,7 +155,7 @@ public class SettingActivity extends BaseActivity {
             String text = editText.getText().toString();
             if (!text.equals("")) {
                 if (Patterns.WEB_URL.matcher(text).matches()) {
-                    setResult(0x20);
+//                    setResult(0x20);
                     if (text.endsWith("/")) text = text.substring(0, text.length()-1);
                     url += text.replaceAll("http://", "").replaceAll("https://", "");
                     SharedPreferencesUtils.setParam(SettingActivity.this, "domain", url);
@@ -160,16 +163,18 @@ public class SettingActivity extends BaseActivity {
                     Silisili.setDomain();
                     domain_default.setText(url);
                     alertDialog.dismiss();
+                    EventBus.getDefault().post(new Refresh(0));
                     application.showSuccessToastMsg(Utils.getString(R.string.set_domain_ok));
                 }else editText.setError(Utils.getString(R.string.set_domain_error2));
             } else editText.setError(Utils.getString(R.string.set_domain_error1));
         });
         alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v -> {
-            setResult(0x20);
+//            setResult(0x20);
             Silisili.DOMAIN = Utils.getString(R.string.domain_url);
             Silisili.setDomain();
             SharedPreferencesUtils.setParam(SettingActivity.this, "domain", Silisili.DOMAIN);
             domain_default.setText(Silisili.DOMAIN);
+            EventBus.getDefault().post(new Refresh(0));
             alertDialog.dismiss();
         });
     }

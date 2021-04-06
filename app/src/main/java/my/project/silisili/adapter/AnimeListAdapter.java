@@ -26,7 +26,6 @@ public class AnimeListAdapter extends BaseQuickAdapter<AnimeDescHeaderBean, Base
     protected void convert(BaseViewHolder helper, AnimeDescHeaderBean item) {
         Utils.setCardDefaultBg(context, helper.getView(R.id.card_view), helper.getView(R.id.title));
         Utils.setDefaultImage(context, item.getImg(), helper.getView(R.id.img), true, helper.getView(R.id.card_view), helper.getView(R.id.title));
-//        Utils.setCardBg(context, item.getImg(), helper.getView(R.id.card_view), helper.getView(R.id.title));
         helper.setText(R.id.title, item.getName());
     }
 }

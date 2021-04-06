@@ -1,7 +1,7 @@
 package my.project.silisili.bean;
 
 public class Refresh {
-    private int index; // 0 刷新收藏
+    private int index; // 0 首页 1 刷新收藏
 
     public Refresh(int index) {
         this.index = index;

@@ -209,7 +209,7 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(Refresh refresh) {
-        if (refresh.getIndex() == 0) {
+        if (refresh.getIndex() == 1) {
             isMain = true;
             favoriteList.clear();
             mPresenter = createPresenter();

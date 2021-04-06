@@ -27,6 +27,9 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.wuyr.rippleanimation.RippleAnimation;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
@@ -37,6 +40,7 @@ import butterknife.BindView;
 import my.project.silisili.R;
 import my.project.silisili.adapter.WeekAdapter;
 import my.project.silisili.application.Silisili;
+import my.project.silisili.bean.Refresh;
 import my.project.silisili.custom.VpSwipeRefreshLayout;
 import my.project.silisili.database.DatabaseUtil;
 import my.project.silisili.main.about.AboutActivity;
@@ -97,6 +101,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
 
     @Override
     protected void init() {
+        EventBus.getDefault().register(this);
         initToolbar();
         initDrawer();
         initSwipe();
@@ -361,6 +366,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     protected void onDestroy() {
         super.onDestroy();
         DatabaseUtil.closeDB();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -416,6 +422,15 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
             removeFragmentTransaction();
             setWeekAdapter(week);
             isChangingTheme = false;
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(Refresh refresh) {
+        if (refresh.getIndex() == 0) {
+            viewpager.removeAllViews();
+            removeFragmentTransaction();
+            mPresenter.loadData(true);
         }
     }
 }

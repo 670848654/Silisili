@@ -156,11 +156,12 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         player.setListener(this, this, this);
         player.backButton.setOnClickListener(v -> finish());
         // 加载视频失败，嗅探视频
-        player.snifferBtn.setOnClickListener(v -> sniffer(true));
+        player.snifferBtn.setOnClickListener(v -> snifferPlayUrl(url));
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) picConfig.setVisibility(View.GONE);
         else picConfig.setVisibility(View.VISIBLE);
         if (gtSdk23()) player.tvSpeed.setVisibility(View.VISIBLE);
         else player.tvSpeed.setVisibility(View.GONE);
+        player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
         player.fullscreenButton.setOnClickListener(view -> {
             if (!Utils.isFastClick()) return;
             if (drawerLayout.isDrawerOpen(GravityCompat.END))
@@ -169,8 +170,8 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         });
         Jzvd.FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
         Jzvd.NORMAL_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
-        player.playingShow();
-        checkPlayUrl();
+        player.startButton.performClick();
+        player.startVideo();
     }
 
     public void startPic() {
@@ -197,7 +198,6 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
             EventBus.getDefault().post(new Event(position));
             siliUrl = VideoUtils.getSiliUrl(bean.getUrl());
             witchTitle = animeTitle + " - " + bean.getTitle();
-            player.playingShow();
             presenter = new VideoPresenter(animeTitle, siliUrl, PlayerActivity.this);
             presenter.loadData(true);
         });
@@ -229,32 +229,13 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         player.startVideo();
     }
 
-    private void checkPlayUrl() {
-        if (url.contains("mp4") || url.contains("m3u8"))
-            play(url);
-        else
-            sniffer(false);
-    }
-
-    /**
-     * 播放视频
-     * @param playUrl
-     */
-    private void play(String playUrl) {
-        Jzvd.releaseAllVideos();
-        player.currentSpeedIndex = 1;
-        player.setUp(playUrl, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
-        player.startVideo();
-    }
-
-
     /**
      * 嗅探视频真实连接
+     * @param animeUrl
      */
-    private void sniffer(boolean showDialog) {
-        if (showDialog)
-            alertDialog = Utils.getProDialog(PlayerActivity.this, R.string.should_be_used_web);
-        SniffingUtil.get().activity(this).referer(url).callback(this).url(url).start();
+    private void snifferPlayUrl(String animeUrl) {
+        alertDialog = Utils.getProDialog(PlayerActivity.this, R.string.should_be_used_web);
+        SniffingUtil.get().activity(this).referer(animeUrl).callback(this).url(animeUrl).start();
     }
 
     private void initUserConfig() {
@@ -337,8 +318,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     @Override
     protected void onPause() {
         super.onPause();
-        if (!inMultiWindow()) player.goOnPlayOnPause();
-        else player.goOnPlayOnResume();
+        player.goOnPlayOnPause();
     }
 
     @Override
@@ -392,6 +372,13 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     }
 
     @Override
+    public void onMultiWindowModeChanged(boolean isInMultiWindowMode, Configuration newConfig) {
+        super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig);
+        if (isInMultiWindowMode)
+            player.goOnPlayOnResume();
+    }
+
+    @Override
     public void cancelDialog() {
         Utils.cancelDialog(alertDialog);
     }
@@ -400,18 +387,22 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     public void getVideoSuccess(String url) {
         runOnUiThread(() -> {
             hideNavBar();
-            this.url = url;
-            checkPlayUrl();
+            playAnime(url);
         });
     }
 
     @Override
     public void getIframeUrl(String iframeUrl) {
         runOnUiThread(() -> {
+            application.showToastMsg(Utils.getString(R.string.should_be_used_web));
+            SniffingUtil.get().activity(this).referer(iframeUrl).callback(this).url(iframeUrl).start();
 //            application.showToastMsg(Utils.getString(R.string.should_be_used_web));
 //            SniffingUtil.get().activity(this).referer(iframeUrl).callback(this).url(iframeUrl).start();
             url = iframeUrl;
-            checkPlayUrl();
+            Jzvd.releaseAllVideos();
+            player.currentSpeedIndex = 1;
+            player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
+            player.startVideo();
         });
     }
 

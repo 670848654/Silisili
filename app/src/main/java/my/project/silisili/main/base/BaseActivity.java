@@ -29,6 +29,7 @@ import my.project.silisili.util.SharedPreferencesUtils;
 import my.project.silisili.util.StatusBarUtil;
 import my.project.silisili.util.Utils;
 import pub.devrel.easypermissions.EasyPermissions;
+import pub.devrel.easypermissions.PermissionRequest;
 
 public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
     public View errorView, emptyView;
@@ -47,28 +48,19 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         else
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        if (!getRunningActivityName().equals("StartActivity") && !getRunningActivityName().equals("HomeActivity")) overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        if (!getRunningActivityName().equals("StartActivity")) overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
         initBeforeView();
         setContentView(setLayoutRes());
-        /*if (Utils.checkHasNavigationBar(this)) {
-            getWindow().setFlags(
-                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-            );
-            getWindow().setNavigationBarColor(Color.TRANSPARENT);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                getWindow().setNavigationBarDividerColor(Color.TRANSPARENT);
-            }
-        }*/
         if (Utils.checkHasNavigationBar(this)) {
             getWindow().getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                             | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-            getWindow().setFlags(
-                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-            );
+            if (!getRunningActivityName().equals("PlayerActivity"))
+                getWindow().setFlags(
+                        WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                        WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+                );
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 getWindow().setNavigationBarColor(Color.TRANSPARENT);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -88,8 +80,14 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
         if (EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             isManager();
         } else {
-            EasyPermissions.requestPermissions(this, Utils.getString(R.string.permissions),
-                    300, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            /*EasyPermissions.requestPermissions(this, Utils.getString(R.string.permissions),
+                    300, Manifest.permission.WRITE_EXTERNAL_STORAGE);*/
+            EasyPermissions.requestPermissions(
+                    new PermissionRequest.Builder(this, 300, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            .setRationale(R.string.permissions)
+                            .setPositiveButtonText(R.string.page_positive)
+                            .setTheme(R.style.DialogStyle)
+                            .build());
         }
     }
 
@@ -153,7 +151,7 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
 
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {
-        init();
+        isManager();
     }
 
     @Override
@@ -247,6 +245,6 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
     @Override
     public void finish() {
         super.finish();
-        if (!getRunningActivityName().equals("StartActivity") && !getRunningActivityName().equals("HomeActivity") && !getRunningActivityName().equals("PlayerActivity")) overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        if (!getRunningActivityName().equals("StartActivity")) overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
     }
 }

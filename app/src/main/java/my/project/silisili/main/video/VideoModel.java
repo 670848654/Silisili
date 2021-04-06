@@ -5,9 +5,13 @@ import android.webkit.URLUtil;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import my.project.silisili.application.Silisili;
 import my.project.silisili.database.DatabaseUtil;
@@ -17,6 +21,7 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class VideoModel implements VideoContract.Model {
+    private final static Pattern PLAY_URL_PATTERN = Pattern.compile("(https?|ftp|file):\\/\\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]");
 
     @Override
     public void getData(String title, String HTML_url, VideoContract.LoadDataCallback callback) {
@@ -55,6 +60,18 @@ public class VideoModel implements VideoContract.Model {
                         public void onResponse(Call call, Response response) throws IOException {
                             Document doc = Jsoup.parse(response.body().string());
                             String source = doc.select("source").attr("src");
+                            if (source.isEmpty()) {
+                                Elements scripts = doc.select("script");
+                                for (Element element : scripts) {
+                                    if (element.html().contains("var url")) {
+                                        Matcher m = PLAY_URL_PATTERN.matcher(element.html());
+                                        if (m.find()) {
+                                            source = m.group();
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
                             if (source.isEmpty()) callback.sendIframeUrl(iframeUrl);
                             else callback.success(source);
                         }
