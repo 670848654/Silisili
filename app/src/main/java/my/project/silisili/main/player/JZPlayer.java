@@ -7,11 +7,15 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+
 import cn.jzvd.JZDataSource;
+import cn.jzvd.JZUtils;
 import cn.jzvd.JzvdStd;
 import my.project.silisili.R;
 import my.project.silisili.cling.ui.DLNAActivity;
@@ -24,7 +28,7 @@ public class JZPlayer extends JzvdStd {
     private ImageView ibLock;
     private boolean locked = false;
     public ImageView fastForward, quickRetreat, config, airplay;
-    public TextView tvSpeed, snifferBtn;
+    public TextView tvSpeed, snifferBtn, openDrama;
     public int currentSpeedIndex = 1;
 
     public JZPlayer(Context context) { super(context); }
@@ -60,6 +64,7 @@ public class JZPlayer extends JzvdStd {
         airplay = findViewById(R.id.airplay);
         airplay.setOnClickListener(this);
         snifferBtn = findViewById(R.id.sniffer_btn);
+        openDrama = findViewById(R.id.open_drama_list);
     }
 
     @Override
@@ -109,7 +114,7 @@ public class JZPlayer extends JzvdStd {
                 }
                 break;
             case R.id.tvSpeed:
-                if (currentSpeedIndex == 5) currentSpeedIndex = 0;
+                if (currentSpeedIndex == 7) currentSpeedIndex = 0;
                 else currentSpeedIndex += 1;
                 mediaInterface.setSpeed(getSpeedFromIndex(currentSpeedIndex));
                 tvSpeed.setText("倍数X" + getSpeedFromIndex(currentSpeedIndex));
@@ -135,15 +140,21 @@ public class JZPlayer extends JzvdStd {
                 ret = 1.0f;
                 break;
             case 2:
-                ret = 1.5f;
+                ret = 1.25f;
                 break;
             case 3:
-                ret = 2.0f;
+                ret = 1.5f;
                 break;
             case 4:
-                ret = 2.5f;
+                ret = 1.75f;
                 break;
             case 5:
+                ret = 2.0f;
+                break;
+            case 6:
+                ret = 2.5f;
+                break;
+            case 7:
                 ret = 3.0f;
                 break;
         }
@@ -273,5 +284,31 @@ public class JZPlayer extends JzvdStd {
     public void onAutoCompletion() {
         onStateAutoComplete();
         listener.complete();
+    }
+
+    @Override
+    public void showWifiDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogStyle);
+        builder.setMessage(getResources().getString(R.string.tips_not_wifi));
+        builder.setPositiveButton(getResources().getString(R.string.tips_not_wifi_confirm), (dialog, which) -> {
+            dialog.dismiss();
+            WIFI_TIP_DIALOG_SHOWED = true;
+            if (state == STATE_PAUSE) {
+                startButton.performClick();
+            } else {
+                startVideo();
+            }
+
+        });
+        builder.setNegativeButton(getResources().getString(R.string.tips_not_wifi_cancel), (dialog, which) -> {
+            dialog.dismiss();
+            releaseAllVideos();
+            ViewGroup vg = (ViewGroup) (JZUtils.scanForActivity(getContext())).getWindow().getDecorView();
+            vg.removeView(this);
+            if (mediaInterface != null) mediaInterface.release();
+            CURRENT_JZVD = null;
+        });
+        builder.setCancelable(false);
+        builder.create().show();
     }
 }

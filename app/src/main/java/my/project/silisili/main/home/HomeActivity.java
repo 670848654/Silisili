@@ -273,6 +273,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     public void showLoadingView() {
         mSwipe.setRefreshing(true);
         application.error = "";
+        application.week = new JSONObject();
     }
 
     @Override
@@ -369,11 +370,11 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
         EventBus.getDefault().unregister(this);
     }
 
-    @Override
+/*    @Override
     public void recreate() {
         removeFragmentTransaction();
         super.recreate();
-    }
+    }*/
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {

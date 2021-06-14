@@ -451,6 +451,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             if (!mActivityFinish) {
                 setCollapsingToolbar();
                 mSwipe.setRefreshing(false);
+                if (isFavorite) DatabaseUtil.updateFavorite(animeDescHeaderBean);
                 desc_view.setVisibility(View.VISIBLE);
                 playLinearLayout.setVisibility(View.VISIBLE);
                 recommendLinearLayout.setVisibility(View.VISIBLE);
@@ -545,5 +546,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         clickIndex = event.getClickIndex();
         animeDescBeans.getAnimeDescDetailsBeans().get(clickIndex).setSelected(true);
         animeDescDetailsAdapter.notifyDataSetChanged();
+        animeDescDramaAdapter.notifyDataSetChanged();
     }
 }

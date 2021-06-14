@@ -128,7 +128,7 @@
     <string name="update_now">现在更新</string>
     <string name="update_after">暂不更新</string>
     <string name="final_compile">最后编译日期</string>
-    <string name="final_compile_time">2021年4月6日</string>
+    <string name="final_compile_time">2021年6月14日</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SilisiliAnime/\n卸载后自行删除此目录</string>
     <string name="github">Github</string>
@@ -152,6 +152,7 @@
     <string name="select_tools">请选择下载工具</string>
     <string name="tools_not_found">没有找到匹配的程序</string>
     <string name="click_to_sniffer">尝试网页嗅探解析</string>
+    <string name="open_drama_list">打开选集列表</string>
     <string name="authorize_msg">点击前往授权</string>
     <string name="authorize_title_msg">缺少必要权限</string>
     <string name="file_manger_msg">Android 11 需要授予所有文件的管理权限</string>

@@ -48,6 +48,7 @@ public class StartActivity extends BaseActivity {
 
     @Override
     protected void init() {
+        hideGap();
         StatusBarUtil.setTranslucentForCoordinatorLayout(this, 0);
         StatusBarUtil.setTranslucentForImageView(this, 0, coordinatorLayout);
         SharedPreferencesUtils.setParam(this,"initX5","init");

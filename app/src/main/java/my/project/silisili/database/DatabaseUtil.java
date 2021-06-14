@@ -187,6 +187,32 @@ public class DatabaseUtil {
     }
 
     /**
+     * 更新收藏信息
+     * @param bean
+     */
+    public static void updateFavorite(AnimeDescHeaderBean bean) {
+        String Query = "select * from t_favorite where f_title =?";
+        Cursor cursor = db.rawQuery(Query, new String[] { bean.getName() });
+        if (cursor.getCount() > 0) {
+            cursor.moveToNext();
+            int id = cursor.getInt(cursor.getColumnIndex("id"));
+            db.execSQL("update t_favorite set f_title=?, f_url=?, f_img=?, f_region=?, f_year=?, f_tag=?, f_desc=?, f_show=?, f_state=? where id=?",
+                    new Object[] {
+                            bean.getName(),
+                            bean.getUrl().substring(Silisili.DOMAIN.length()),
+                            bean.getImg().contains(Silisili.DOMAIN) ? bean.getImg().substring(Silisili.DOMAIN.length()) : bean.getImg(),
+                            bean.getRegion(),
+                            bean.getYear(),
+                            bean.getTag(),
+                            bean.getDesc(),
+                            bean.getShow(),
+                            bean.getState(),
+                            id});
+        }
+        cursor.close();
+    }
+
+    /**
      * 删除收藏
      * @param title
      */
