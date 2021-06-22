@@ -266,7 +266,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
     @SuppressLint("RestrictedApi")
     public void openAnimeDesc() {
-        animeImg.setImageDrawable(getDrawable(R.drawable.loading));
+        animeImg.setImageDrawable(getDrawable(isDarkTheme ? R.drawable.loading_night : R.drawable.loading_light));
         tagContainerLayout.setVisibility(View.GONE);
         tagContainerLayout.setTags("");
         setTextviewEmpty(desc);
@@ -354,7 +354,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         RequestOptions options = new RequestOptions()
                 .centerCrop()
                 .format(DecodeFormat.PREFER_RGB_565)
-                .placeholder(R.drawable.loading)
+                .placeholder(isDarkTheme ? R.drawable.loading_night : R.drawable.loading_light)
                 .error(R.drawable.error);
         Glide.with(this)
                 .load(animeDescHeaderBean.getImg())
