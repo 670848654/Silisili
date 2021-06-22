@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -72,6 +73,8 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     TextView speedTextView;
     private String[] speeds = Utils.getArray(R.array.speed_item);
     private int userSpeed = 2;
+    @BindView(R.id.hide_progress)
+    SwitchCompat switchCompat;
 
     @Override
     protected Presenter createPresenter() {
@@ -170,6 +173,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         });
         Jzvd.FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
         Jzvd.NORMAL_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
+        player.playingShow();
         player.startButton.performClick();
         player.startVideo();
     }
@@ -198,6 +202,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
             EventBus.getDefault().post(new Event(position));
             siliUrl = VideoUtils.getSiliUrl(bean.getUrl());
             witchTitle = animeTitle + " - " + bean.getTitle();
+            player.playingShow();
             presenter = new VideoPresenter(animeTitle, siliUrl, PlayerActivity.this);
             presenter.loadData(true);
         });
@@ -253,6 +258,10 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
                 setUserSpeedConfig(speeds[3], 3);
                 break;
         }
+        switchCompat.setChecked((Boolean) SharedPreferencesUtils.getParam(this, "hide_progress", false));
+        switchCompat.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            SharedPreferencesUtils.setParam(this, "hide_progress", isChecked);
+        });
     }
 
     private void setUserSpeedConfig(String text, int speed) {
