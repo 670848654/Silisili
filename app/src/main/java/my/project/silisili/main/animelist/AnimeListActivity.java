@@ -118,7 +118,7 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
     }
 
     public void initAdapter(){
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, Utils.isPad() ? 5 : 3));
         adapter = new AnimeListAdapter(this, animeList);
         adapter.openLoadAnimation();
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
