@@ -165,6 +165,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("1.0-beta16", "2021年7月4日", "内置播放器添加播放时可隐藏底部进度条的选项（在播放器中设置）\n内置播放器优化相关操作"));
         logsList.add(new LogBean("1.0-beta15", "2021年6月14日", "添加1.25、1.75倍速播放\n修复其他已知问题"));
         logsList.add(new LogBean("1.0-beta14", "2021年4月6日", "修复一些番剧播放时崩溃的问题\n修复一些番剧无法获取到播放地址的问题\n修复其他已知问题"));
         logsList.add(new LogBean("1.0-beta13", "2021年3月30日", "支持Android 11\n修复已知问题，部分UI变更"));

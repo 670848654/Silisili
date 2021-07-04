@@ -56,14 +56,17 @@ public class VideoUtils {
      * @param animeTitle
      * @param siliUrl
      * @param list
+     * @param clickIndex
      */
-    public static void openPlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String siliUrl, List<AnimeDescDetailsBean> list) {
+    public static void openPlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String siliUrl,
+                                  List<AnimeDescDetailsBean> list, int clickIndex) {
         Bundle bundle = new Bundle();
         bundle.putString("title", witchTitle);
         bundle.putString("url", url);
         bundle.putString("animeTitle", animeTitle);
         bundle.putString("sili", siliUrl);
         bundle.putSerializable("list", (Serializable) list);
+        bundle.putInt("clickIndex", clickIndex);
         Silisili.destoryActivity("player");
         if (isDescActivity)
             activity.startActivityForResult(new Intent(activity, PlayerActivity.class).putExtras(bundle), 0x10);

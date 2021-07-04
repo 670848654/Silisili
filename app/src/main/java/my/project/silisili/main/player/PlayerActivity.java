@@ -48,7 +48,7 @@ import my.project.silisili.util.StatusBarUtil;
 import my.project.silisili.util.Utils;
 import my.project.silisili.util.VideoUtils;
 
-public class PlayerActivity extends BaseActivity implements VideoContract.View, JZPlayer.CompleteListener, JZPlayer.TouchListener, SniffingUICallback {
+public class PlayerActivity extends BaseActivity implements VideoContract.View, JZPlayer.CompleteListener, JZPlayer.TouchListener, JZPlayer.ShowOrHideChangeViewListener, SniffingUICallback {
     @BindView(R.id.player)
     JZPlayer player;
     private String witchTitle, url, siliUrl;
@@ -75,6 +75,11 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     private int userSpeed = 2;
     @BindView(R.id.hide_progress)
     SwitchCompat switchCompat;
+    private int clickIndex;
+    private boolean hasPreVideo = false;
+    private boolean hasNextVideo = false;
+    protected static String PREVIDEOSTR = "上一集：%s";
+    protected static String NEXTVIDEOSTR = "下一集：%s";
 
     @Override
     protected Presenter createPresenter() {
@@ -117,6 +122,8 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         siliUrl = bundle.getString("sili");
         //剧集list
         list = (List<AnimeDescDetailsBean>) bundle.getSerializable("list");
+        //当前播放剧集下标
+        clickIndex = bundle.getInt("clickIndex");
         //禁止冒泡
         linearLayout.setOnClickListener(view -> {
             return;
@@ -124,6 +131,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         navConfigView.setOnClickListener(view -> {
             return;
         });
+        setPlayerPreNextTag();
         linearLayout.getBackground().mutate().setAlpha(150);
         navConfigView.getBackground().mutate().setAlpha(150);
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
@@ -156,8 +164,16 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
                 drawerLayout.closeDrawer(GravityCompat.START);
             else drawerLayout.openDrawer(GravityCompat.START);
         });
-        player.setListener(this, this, this);
+        player.setListener(this, this, this, this);
         player.backButton.setOnClickListener(v -> finish());
+        player.preVideo.setOnClickListener(v -> {
+            clickIndex--;
+            changePlayUrl(clickIndex);
+        });
+        player.nextVideo.setOnClickListener(v -> {
+            clickIndex++;
+            changePlayUrl(clickIndex);
+        });
         // 加载视频失败，嗅探视频
         player.snifferBtn.setOnClickListener(v -> snifferPlayUrl(url));
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) picConfig.setVisibility(View.GONE);
@@ -193,19 +209,32 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
             if (!Utils.isFastClick()) return;
 //            setResult(0x20);
             drawerLayout.closeDrawer(GravityCompat.END);
-            AnimeDescDetailsBean bean = (AnimeDescDetailsBean) adapter.getItem(position);
-            Jzvd.releaseAllVideos();
-            alertDialog = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
-            MaterialButton materialButton = (MaterialButton) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
-            materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
-            bean.setSelected(true);
-            EventBus.getDefault().post(new Event(position));
-            siliUrl = VideoUtils.getSiliUrl(bean.getUrl());
-            witchTitle = animeTitle + " - " + bean.getTitle();
-            player.playingShow();
-            presenter = new VideoPresenter(animeTitle, siliUrl, PlayerActivity.this);
-            presenter.loadData(true);
+            changePlayUrl(position);
         });
+    }
+
+    private void setPlayerPreNextTag() {
+        hasPreVideo = clickIndex != 0;
+        player.preVideo.setText(hasPreVideo ? String.format(PREVIDEOSTR, list.get(clickIndex-1).getTitle()) : "");
+        hasNextVideo = clickIndex != list.size() - 1;
+        player.nextVideo.setText(hasNextVideo ? String.format(NEXTVIDEOSTR, list.get(clickIndex+1).getTitle()) : "");
+    }
+
+    private void changePlayUrl(int position) {
+        clickIndex = position;
+        setPlayerPreNextTag();
+        AnimeDescDetailsBean bean = (AnimeDescDetailsBean) dramaAdapter.getItem(position);
+        Jzvd.releaseAllVideos();
+        alertDialog = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
+        MaterialButton materialButton = (MaterialButton) dramaAdapter.getViewByPosition(recyclerView, position, R.id.tag_group);
+        materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
+        bean.setSelected(true);
+        EventBus.getDefault().post(new Event(position));
+        siliUrl = VideoUtils.getSiliUrl(bean.getUrl());
+        witchTitle = animeTitle + " - " + bean.getTitle();
+        player.playingShow();
+        presenter = new VideoPresenter(animeTitle, siliUrl, PlayerActivity.this);
+        presenter.loadData(true);
     }
 
     /**
@@ -442,9 +471,15 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
 
     @Override
     public void complete() {
-        application.showSuccessToastMsg("播放完毕");
-        if (!drawerLayout.isDrawerOpen(GravityCompat.END))
-            drawerLayout.openDrawer(GravityCompat.END);
+        if (hasNextVideo) {
+            application.showSuccessToastMsg("开始播放下一集");
+            clickIndex++;
+            changePlayUrl(clickIndex);
+        } else {
+            application.showSuccessToastMsg("全部播放完毕");
+            if (!drawerLayout.isDrawerOpen(GravityCompat.END))
+                drawerLayout.openDrawer(GravityCompat.END);
+        }
     }
 
     @Override
@@ -487,5 +522,11 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         if (null != presenter) presenter.detachView();
         JzvdStd.releaseAllVideos();
         super.finish();
+    }
+
+    @Override
+    public void showOrHideChangeView() {
+        player.preVideo.setVisibility(hasPreVideo ? View.VISIBLE : View.GONE);
+        player.nextVideo.setVisibility(hasNextVideo ? View.VISIBLE : View.GONE);
     }
 }

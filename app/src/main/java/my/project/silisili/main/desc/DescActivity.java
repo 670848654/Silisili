@@ -312,7 +312,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 Utils.selectVideoPlayer(this, animeUrl);
                 break;
         }*/
-        VideoUtils.openPlayer(true, this, witchTitle, animeUrl, animeTitle, dramaUrl, animeDescBeans.getAnimeDescDetailsBeans());
+        VideoUtils.openPlayer(true, this, witchTitle, animeUrl, animeTitle, dramaUrl, animeDescBeans.getAnimeDescDetailsBeans(), clickIndex);
     }
 
 /*    @Override
@@ -511,7 +511,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         runOnUiThread(() -> {
             Utils.cancelDialog(alertDialog);
 //            application.showToastMsg(Utils.getString(R.string.should_be_used_web));
-            VideoUtils.openPlayer(true, this, witchTitle, iframeUrl, animeTitle, dramaUrl, animeDescBeans.getAnimeDescDetailsBeans());
+            VideoUtils.openPlayer(true, this, witchTitle, iframeUrl, animeTitle, dramaUrl, animeDescBeans.getAnimeDescDetailsBeans(), clickIndex);
         });
     }
 
