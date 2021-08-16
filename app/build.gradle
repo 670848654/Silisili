@@ -9,7 +9,7 @@ android {
         targetSdkVersion 30
         versionCode 16
         versionName "1.0-beta16"
-        ndk { abiFilters "armeabi", "x86"}
+        ndk { abiFilters "armeabi", "x86" }
         resConfigs "zh"
     }
     compileOptions {
@@ -30,6 +30,8 @@ android {
 
 allprojects {
     repositories {
+        mavenCentral()
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
         maven { url "https://jitpack.io" }
     }
 }
